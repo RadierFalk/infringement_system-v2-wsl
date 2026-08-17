@@ -13,6 +13,8 @@ class Employee(Base):
     global_id = Column(String(50), nullable=True, index=True)
     company = Column(String(100), nullable=True, index=True)
     role = Column(String(150), nullable=True)
+    hashed_password = Column(String(255), nullable=True)
+    is_admin = Column("is_admin", String(1), nullable=False, server_default="N")
 
     department_id = Column(Integer, ForeignKey("departments.id"))
     department = relationship("Department", back_populates="employees")
