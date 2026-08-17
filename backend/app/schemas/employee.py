@@ -14,11 +14,13 @@ class EmployeeBase(BaseModel):
 
 
 class EmployeeCreate(EmployeeBase):
-    pass
+    password: Optional[str] = None
+    is_admin: Optional[bool] = False
 
 
 class EmployeeRead(EmployeeBase):
     id: int
+    is_admin: bool = False
     department: Optional[DepartmentRead] = None
 
     class Config:
