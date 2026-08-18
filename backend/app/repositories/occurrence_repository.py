@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session, joinedload
 
 from .base_repository import BaseRepository
 from app.models import Occurrence, Employee, Department, OccurrenceCategory
+from app.models import Occurrence, Employee, Department, OccurrenceCategory
+from app.models.occurrence import StatusEnum
 
 
 class OccurrenceRepository(BaseRepository):
@@ -56,3 +58,12 @@ class OccurrenceRepository(BaseRepository):
         )
 
         return items, total
+
+    def update_status(self, occurrence_id: int, new_status: StatusEnum) -> Occurrence | None:
+        occurrence = self.get(occurrence_id)
+        if not occurrence:
+            return None
+        occurrence.update_status(new_status)
+        self.db.commit()
+        self.db.refresh(occurrence)
+        return occurrence

@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     db_port: str = "3306"
     db_name: str
 
+    smtp_relay_url: str = "http://localhost:9300/SMTP"  # ajustar por ambiente
     secret_key: str
     algorithm: str = "HS256"
     access_token_expire_days: int = 15

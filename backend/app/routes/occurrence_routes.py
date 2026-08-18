@@ -7,6 +7,9 @@ from app.repositories import OccurrenceRepository
 from app.schemas import OccurrenceCreate, OccurrenceRead, PaginatedResponse
 from app.dependencies.auth import get_current_user
 from app.models import Employee
+from app.services.email_service import resolve_recipients, send_occurrence_email
+from app.models.occurrence import StatusEnum
+
 
 router = APIRouter(prefix="/occurrences", tags=["occurrences"])
 
@@ -65,6 +68,30 @@ def create_occurrence(
     data = payload.model_dump()
     created = repo.create(data)
     return repo.get(created.id)
+
+@router.post("/{id}/send-notification")
+def send_notification(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: Employee = Depends(get_current_user),
+):
+    repo = OccurrenceRepository(db)
+    occurrence = repo.get(id)
+    if not occurrence:
+        raise HTTPException(status_code=404, detail="Ocorrência não encontrada")
+
+    to_emails, cc_emails = resolve_recipients(db, occurrence)
+    sent = send_occurrence_email(occurrence, to_emails, cc_emails)
+
+    if sent:
+        repo.update_status(id, StatusEnum.SENT)
+
+    return {
+        "sent": sent,
+        "to": to_emails,
+        "cc": cc_emails,
+        "status": occurrence.status.value,
+    }
 
 
 @router.delete("/{id}", status_code=204)
