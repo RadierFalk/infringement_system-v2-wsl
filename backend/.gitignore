@@ -4,4 +4,7 @@ __pycache__/
 .env
 upload/
 *.db
-.DS_Store
+.DS_Store.env.test
+htmlcov/
+.coverage
+.pytest_cache/

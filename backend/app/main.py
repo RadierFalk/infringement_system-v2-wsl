@@ -1,3 +1,9 @@
+python
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,6 +18,22 @@ from app.routes import (
 
 app = FastAPI(title="Infringement System API")
 
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """
+    Achata os erros de validação do Pydantic num formato consistente com
+    o resto da API: {"detail": "mensagem legível"}.
+    Facilita o tratamento genérico de erros no interceptor HTTP do Angular.
+    """
+    first_error = exc.errors()[0]
+    field = " -> ".join(str(loc) for loc in first_error["loc"] if loc != "body")
+    message = f"{field}: {first_error['msg']}" if field else first_error["msg"]
+
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"detail": message},
+    )
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:4200"],
