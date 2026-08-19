@@ -1,0 +1,33 @@
+.login-wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+}
+
+.login-card {
+  width: 360px;
+  padding: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.error-message {
+  color: #b00020;
+  font-size: 13px;
+  margin: 4px 0 12px;
+}
+
+.submit-row {
+  margin-top: 8px;
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+}
