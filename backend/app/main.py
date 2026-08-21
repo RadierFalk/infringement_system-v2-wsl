@@ -41,12 +41,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# /auth fica FORA do prefixo /api de propósito: o OAuth2PasswordBearer
+# no dependencies/auth.py está configurado com tokenUrl="/auth/login"
+# (hardcoded). Se colocássemos /api aqui, o Swagger/OpenAPI ficaria
+# apontando pro token URL errado.
 app.include_router(auth_router)
-app.include_router(department_router)
-app.include_router(employee_router)
-app.include_router(occurrence_category_router)
-app.include_router(occurrence_router)
-app.include_router(feedback_router)
+
+# Todos os routers de domínio (recursos de negócio) ficam sob /api,
+# deixando claro na URL o que é "API de dados" — separado, por exemplo,
+# de uma eventual rota de health-check ou página estática no futuro.
+app.include_router(department_router, prefix="/api")
+app.include_router(employee_router, prefix="/api")
+app.include_router(occurrence_category_router, prefix="/api")
+app.include_router(occurrence_router, prefix="/api")
+app.include_router(feedback_router, prefix="/api")
 
 
 @app.get("/")
