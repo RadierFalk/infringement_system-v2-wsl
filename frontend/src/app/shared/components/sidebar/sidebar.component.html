@@ -1,0 +1,23 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <span class="logo">Infringement System</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a routerLink="/home" routerLinkActive="active" class="nav-item">Dashboard</a>
+
+    <!-- *ngIf esconde o link inteiro do DOM (não é só um efeito visual de CSS)
+         para usuários que não são admin. -->
+    <a *ngIf="isAdmin" routerLink="/management" routerLinkActive="active" class="nav-item">Gestão</a>
+
+    <a routerLink="/occurrences-search" routerLinkActive="active" class="nav-item">Buscar Ocorrências</a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <span class="user-name">{{ userInfo?.name }}</span>
+      <span class="user-role">{{ isAdmin ? 'Administrador' : 'Funcionário' }}</span>
+    </div>
+    <button class="logout-button" (click)="logout()">Sair</button>
+  </div>
+</aside>

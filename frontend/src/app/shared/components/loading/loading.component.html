@@ -1,0 +1,10 @@
+<!--
+  O pipe "async" faz duas coisas importantes:
+  1. Se inscreve no Observable isLoading$ automaticamente (não precisa
+     chamar .subscribe() no .ts).
+  2. Cancela a inscrição sozinho quando o componente é destruído,
+     evitando memory leak — sem precisar de ngOnDestroy manual.
+-->
+<div class="loading-overlay" *ngIf="loadingService.isLoading$ | async">
+  <div class="spinner"></div>
+</div>
