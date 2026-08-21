@@ -47,7 +47,7 @@ export class LoginComponent {
     this.authService.login({ username, password }, rememberMe).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/home']);
+        this.router.navigate(['/dashboard']);
       },
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
