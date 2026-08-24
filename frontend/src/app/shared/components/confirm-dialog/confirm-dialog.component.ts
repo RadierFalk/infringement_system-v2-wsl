@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalComponent } from '../modal/modal.component';
+import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 
 // Reutilizável para QUALQUER ação destrutiva do sistema (excluir
 // departamento, funcionário, categoria, ocorrência...). Quem usa esse

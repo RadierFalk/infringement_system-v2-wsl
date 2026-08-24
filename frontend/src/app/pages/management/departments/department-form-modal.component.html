@@ -1,0 +1,29 @@
+<app-modal (closeRequested)="closed.emit()">
+  <h3 class="form-title">{{ isEditMode ? 'Editar departamento' : 'Novo departamento' }}</h3>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field">
+      <label for="name">Nome</label>
+      <input id="name" type="text" formControlName="name" placeholder="Ex: Recursos Humanos" />
+    </div>
+
+    <div class="field">
+      <label for="manager_email">E-mail do gestor</label>
+      <input id="manager_email" type="email" formControlName="manager_email" placeholder="gestor@empresa.com" />
+    </div>
+
+    <div class="field">
+      <label for="director_name">Nome do diretor</label>
+      <input id="director_name" type="text" formControlName="director_name" placeholder="Ex: João Silva" />
+    </div>
+
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="closed.emit()">Cancelar</button>
+      <button type="submit" class="btn-primary" [disabled]="isSaving">
+        {{ isSaving ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

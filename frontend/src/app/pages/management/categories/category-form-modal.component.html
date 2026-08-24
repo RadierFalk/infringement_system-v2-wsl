@@ -1,0 +1,24 @@
+<app-modal (closeRequested)="closed.emit()">
+  <h3 class="form-title">{{ isEditMode ? 'Editar categoria' : 'Nova categoria' }}</h3>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field">
+      <label for="name">Nome</label>
+      <input id="name" type="text" formControlName="name" placeholder="Ex: Atraso" />
+    </div>
+
+    <div class="field">
+      <label for="description">Descrição</label>
+      <textarea id="description" formControlName="description" rows="3" placeholder="Descreva o critério dessa categoria"></textarea>
+    </div>
+
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="closed.emit()">Cancelar</button>
+      <button type="submit" class="btn-primary" [disabled]="isSaving">
+        {{ isSaving ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

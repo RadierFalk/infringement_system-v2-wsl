@@ -1,0 +1,26 @@
+@import '../../../styles/variables';
+
+.tabs {
+  display: flex;
+  gap: $space-2;
+  border-bottom: 1px solid $color-border;
+  margin-bottom: $space-5;
+}
+
+.tab {
+  padding: $space-3 $space-4;
+  color: $color-text-secondary;
+  text-decoration: none;
+  font-size: $font-size-sm;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: $color-text-primary;
+  }
+
+  &.active {
+    color: $color-primary;
+    border-bottom-color: $color-primary;
+  }
+}

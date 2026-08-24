@@ -27,7 +27,7 @@ export interface OccurrenceCreate {
   providedIn: 'root',
 })
 export class OccurrencesService {
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService) {}
 
   getAll(
     filters: OccurrenceFilters = {},

@@ -1,0 +1,74 @@
+<div class="employees-page">
+  <header class="page-header">
+    <h2>Funcionários</h2>
+    <button type="button" class="btn-primary" (click)="openCreateModal()">
+      + Novo funcionário
+    </button>
+  </header>
+
+  <input
+    type="text"
+    class="search-input"
+    placeholder="Buscar por nome ou usuário..."
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="onSearchInput()"
+  />
+
+  <p *ngIf="isLoading" class="loading-placeholder">Carregando...</p>
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+  <p *ngIf="deleteErrorMessage" class="error-message">{{ deleteErrorMessage }}</p>
+
+  <table class="data-table" *ngIf="!isLoading && employees.length > 0">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Usuário</th>
+        <th>Departamento</th>
+        <th>Admin</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let emp of employees">
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.username }}</td>
+        <td>{{ emp.department?.name || '—' }}</td>
+        <td>{{ emp.is_admin ? 'Sim' : 'Não' }}</td>
+        <td class="actions-cell">
+          <button type="button" class="btn-link" (click)="openEditModal(emp)">Editar</button>
+          <button type="button" class="btn-link btn-link-danger" (click)="requestDelete(emp)">Excluir</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!isLoading && employees.length === 0" class="empty-state">
+    Nenhum funcionário encontrado.
+  </p>
+
+  <div class="pagination" *ngIf="!isLoading && total > 0">
+    <button type="button" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+      ← Anterior
+    </button>
+    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <button type="button" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+      Próxima →
+    </button>
+  </div>
+
+  <app-employee-form-modal
+    *ngIf="showFormModal"
+    [employee]="employeeBeingEdited"
+    [departments]="departments"
+    (saved)="onEmployeeSaved()"
+    (closed)="closeFormModal()"
+  ></app-employee-form-modal>
+
+  <app-confirm-dialog
+    *ngIf="employeePendingDelete"
+    title="Excluir funcionário"
+    [message]="'Tem certeza que deseja excluir \'' + employeePendingDelete.name + '\'?'"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  ></app-confirm-dialog>
+</div>

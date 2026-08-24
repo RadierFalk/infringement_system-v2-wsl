@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,7 +11,9 @@ import { AuthService } from '../../../services/auth.service';
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-  userInfo = this.authService.getUserInfo();
+  get userInfo() {
+    return this.authService.getUserInfo();
+  }
 
   constructor(private authService: AuthService, private router: Router) {}
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../core/services/api.service';
-import { Department, DepartmentWithCount, DepartmentPayload } from '../models/department.interface';
+import { ApiService } from 'src/app/core/services/api.service';
+import { Department, DepartmentWithCount, DepartmentPayload } from 'src/app/models/department.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DepartmentsService {

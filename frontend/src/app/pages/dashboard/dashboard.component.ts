@@ -22,7 +22,9 @@ interface StatusCount {
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
-  userInfo = this.authService.getUserInfo();
+  get userInfo() {
+    return this.authService.getUserInfo();
+  }
 
   isLoading = true;
   errorMessage = '';
