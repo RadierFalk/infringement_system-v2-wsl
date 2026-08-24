@@ -38,3 +38,13 @@ export interface Occurrence {
   category_id?: number;
   category?: OccurrenceCategory;
 }
+
+export interface OccurrenceEmployee {
+  id: number;
+  name: string;
+  username: string;
+  department?: {
+    id: number;
+    name: string;
+  };
+}

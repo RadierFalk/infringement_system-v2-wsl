@@ -5,11 +5,13 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ShellComponent } from './layout/shell/shell.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 import { ManagementComponent } from './pages/management/management.component';
 import { DepartmentsComponent } from './pages/management/departments/departments.component';
 import { EmployeesComponent } from './pages/management/employees/employees.component';
 import { CategoriesComponent } from './pages/management/categories/categories.component';
+import { OccurrencesSearchComponent } from './pages/occurrences-search/occurrences-search.component';
 
 import { OccurrencesComponent } from './pages/management/occurrences/occurrences.component';
 import { OccurrenceAddComponent } from './pages/management/occurrences/add/occurrence-add.component';
@@ -24,12 +26,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'occurrences-search', component: OccurrencesSearchComponent },
 
       {
         path: 'management',
         component: ManagementComponent,
+        canActivate: [adminGuard],
         children: [
           { path: '', redirectTo: 'departments', pathMatch: 'full' },
 

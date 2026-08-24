@@ -1,0 +1,108 @@
+@import '../../../styles/variables';
+
+.page-header {
+  margin-bottom: $space-5;
+
+  h1 {
+    margin: 0 0 $space-1;
+    font-size: $font-size-2xl;
+  }
+
+  p {
+    margin: 0;
+    color: $color-text-secondary;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: $space-3;
+  margin-bottom: $space-5;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 240px;
+  padding: $space-3;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-text-primary;
+  font-size: $font-size-sm;
+
+  &:focus { outline: none; border-color: $color-primary; }
+}
+
+.filter-select {
+  padding: $space-3;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-text-primary;
+  font-size: $font-size-sm;
+}
+
+.loading-placeholder,
+.empty-state {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+}
+
+.error-message {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin-bottom: $space-4;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  overflow: hidden;
+  margin-bottom: $space-4;
+
+  th, td {
+    text-align: left;
+    padding: $space-3 $space-4;
+    font-size: $font-size-sm;
+    border-bottom: 1px solid $color-border;
+  }
+
+  th {
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  td small {
+    display: block;
+    margin-top: $space-1;
+    color: $color-text-muted;
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+
+  button {
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: transparent;
+    color: $color-text-primary;
+    cursor: pointer;
+
+    &:hover:not(:disabled) { background-color: $color-surface-hover; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+}
