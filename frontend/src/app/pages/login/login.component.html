@@ -1,0 +1,44 @@
+<div class="login-page">
+  <form class="login-card" [formGroup]="form" (ngSubmit)="submit()">
+    <h1 class="login-title">Bem-vindo de volta</h1>
+    <p class="login-subtitle">Entre com suas credenciais para continuar</p>
+
+    <div class="field">
+      <label for="username">Usuário</label>
+      <input
+        id="username"
+        type="text"
+        formControlName="username"
+        placeholder="Digite seu usuário"
+        [class.invalid]="form.get('username')?.invalid && form.get('username')?.touched"
+      />
+    </div>
+
+    <div class="field">
+      <label for="password">Senha</label>
+      <div class="password-wrapper">
+        <input
+          id="password"
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="password"
+          placeholder="Digite sua senha"
+          [class.invalid]="form.get('password')?.invalid && form.get('password')?.touched"
+        />
+        <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+          {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+        </button>
+      </div>
+    </div>
+
+    <label class="checkbox-label">
+      <input type="checkbox" formControlName="rememberMe" />
+      Manter-se conectado
+    </label>
+
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button type="submit" class="login-button" [disabled]="isLoading">
+      {{ isLoading ? 'Entrando...' : 'Login' }}
+    </button>
+  </form>
+</div>

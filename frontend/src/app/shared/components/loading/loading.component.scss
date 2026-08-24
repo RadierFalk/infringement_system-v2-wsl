@@ -1,0 +1,26 @@
+@import '../../../../styles/variables';
+
+.loading-overlay {
+  // position: fixed + inset: 0 cobre a tela inteira, independente
+  // de onde esse componente for colocado na árvore de componentes.
+  position: fixed;
+  inset: 0;
+  background-color: rgba(12, 12, 21, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; // acima de qualquer outro conteúdo da tela
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid $color-border;
+  border-top-color: $color-primary; // só o topo colorido cria o efeito de "giro"
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,9 @@
+<div class="modal-backdrop" (click)="onBackdropClick()">
+  <div class="modal-card" (click)="onCardClick($event)">
+    <button type="button" class="modal-close" (click)="closeRequested.emit()">✕</button>
+
+    <!-- Aqui entra o conteúdo real do modal: o <app-modal>...</app-modal>
+         que quem usa esse componente colocar entre as tags. -->
+    <ng-content></ng-content>
+  </div>
+</div>

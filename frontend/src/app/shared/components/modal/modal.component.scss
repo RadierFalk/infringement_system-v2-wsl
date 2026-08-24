@@ -1,0 +1,37 @@
+@import '../../../../styles/variables';
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(12, 12, 21, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; // abaixo do loading global (9999), acima do resto da tela
+}
+
+.modal-card {
+  position: relative;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-6;
+  min-width: 360px;
+  max-width: 480px;
+  width: 90%;
+}
+
+.modal-close {
+  position: absolute;
+  top: $space-3;
+  right: $space-3;
+  background: transparent;
+  border: none;
+  color: $color-text-secondary;
+  font-size: $font-size-lg;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-text-primary;
+  }
+}
