@@ -24,6 +24,7 @@ class OccurrenceRepository(BaseRepository):
         filter_text: Optional[str] = None,
         status: Optional[str] = None,
         category_id: Optional[int] = None,
+        department_id: Optional[int] = None,
         page: int = 1,
         size: int = 10,
     ) -> Tuple[List[Occurrence], int]:
@@ -48,6 +49,9 @@ class OccurrenceRepository(BaseRepository):
 
         if category_id:
             query = query.filter(Occurrence.category_id == category_id)
+
+        if department_id:
+            query = query.filter(Employee.department_id == department_id)
 
         total = query.count()
         items = (
