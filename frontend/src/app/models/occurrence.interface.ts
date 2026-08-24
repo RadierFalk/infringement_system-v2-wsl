@@ -38,3 +38,11 @@ export interface Occurrence {
   category_id?: number;
   category?: OccurrenceCategory;
 }
+
+export interface OccurrencePayload {
+  title: string;
+  description?: string;
+  date: string; //enviado como string ISO (ex: new Date().toISOString())
+  employee_id: number;
+  category_id?: number;
+}

@@ -24,6 +24,7 @@ class OccurrenceRepository(BaseRepository):
         filter_text: Optional[str] = None,
         status: Optional[str] = None,
         category_id: Optional[int] = None,
+        department_id: Optional[int] = None,
         page: int = 1,
         size: int = 10,
     ) -> Tuple[List[Occurrence], int]:
@@ -33,6 +34,14 @@ class OccurrenceRepository(BaseRepository):
             joinedload(Occurrence.category),
         )
 
+        # O join com Employee é necessário tanto para a busca textual (filter_text,
+        # que já buscava por nome de funcionário/departamento) quanto para o novo
+        # filtro por departamento. Evitamos fazer o join duas vezes: se filter_text
+        # já foi aplicado, o join já existe na query.
+        needs_employee_join = filter_text or department_id
+        if needs_employee_join:
+            query = query.join(Employee)
+        
         if filter_text:
             query = query.join(Employee).join(Department).filter(
                 or_(
@@ -48,6 +57,9 @@ class OccurrenceRepository(BaseRepository):
 
         if category_id:
             query = query.filter(Occurrence.category_id == category_id)
+
+        if department_id:
+            query = query.filter(Employee.department_id == department_id)
 
         total = query.count()
         items = (
