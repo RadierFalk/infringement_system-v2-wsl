@@ -1,36 +1,71 @@
+@import '../../../../../styles/variables';
+
 .occurrences-list-page {
-  padding: 32px;
+  padding: 0;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: $space-6;
 
   h1 {
     margin: 0;
+    font-size: $font-size-2xl;
+    color: $color-text-primary;
   }
 
   p {
-    margin: 6px 0 0;
-    color: #666;
+    margin: $space-1 0 0;
+    color: $color-text-secondary;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: $space-3;
+}
+
+.back-button {
+  padding: $space-2 $space-4;
+  text-decoration: none;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+  background: transparent;
+  font-size: $font-size-sm;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: $color-text-secondary;
+    color: $color-text-primary;
   }
 }
 
 .add-button {
-  padding: 10px 16px;
+  padding: $space-2 $space-4;
   text-decoration: none;
-  border-radius: 6px;
-  background: #1976d2;
-  color: white;
+  border-radius: $radius-md;
+  background-color: $color-primary;
+  color: #fff;
+  font-size: $font-size-sm;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
 }
 
 .content-card {
-  background: white;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-6;
 }
 
 .table-wrapper {
@@ -44,13 +79,16 @@ table {
 
 th,
 td {
-  padding: 14px 12px;
+  padding: $space-3 $space-4;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid $color-border;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
 }
 
 th {
-  font-weight: 600;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
 }
 
 td strong {
@@ -59,41 +97,55 @@ td strong {
 
 td small {
   display: block;
-  margin-top: 4px;
-  color: #777;
+  margin-top: $space-1;
+  color: $color-text-muted;
 }
 
 .status {
   display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: #eee;
+  padding: $space-1 $space-2;
+  border-radius: $radius-sm;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
 }
 
 .state-message {
-  padding: 32px;
+  padding: $space-8;
   text-align: center;
-  color: #666;
+  color: $color-text-muted;
+  font-size: $font-size-sm;
 }
 
 .state-message.error {
-  color: #c62828;
+  color: $color-danger;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  margin-top: 24px;
+  gap: $space-4;
+  margin-top: $space-6;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
 
   button {
-    padding: 8px 14px;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: transparent;
+    color: $color-text-primary;
     cursor: pointer;
-  }
 
-  button:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
+    &:hover:not(:disabled) {
+      background-color: $color-surface-hover;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
   }
 }
