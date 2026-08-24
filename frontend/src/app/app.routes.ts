@@ -1,31 +1,41 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { ShellComponent } from './layout/shell/shell.component';
-import { authGuard } from './core/guards/auth.guard';
-import { guestGuard } from './core/guards/guest.guard';
+import { LoginComponent } from 'src/app/pages/login/login.component';
+import { DashboardComponent } from 'src/app/pages/dashboard/dashboard.component';
+import { ShellComponent } from 'src/app/layout/shell/shell.component';
+import { ManagementComponent } from 'src/app/pages/management/management.component';
+import { DepartmentsComponent } from 'src/app/pages/management/departments/departments.component';
+import { EmployeesComponent } from './pages/management/employees/employees.component';
+import { CategoriesComponent } from './pages/management/categories/categories.component';
+import { authGuard } from 'src/app/core/guards/auth.guard';
+import { guestGuard } from 'src/app/core/guards/guest.guard';
+import { adminGuard } from 'src/app/core/guards/admin.guard';
 
 export const routes: Routes = [
-  // Login fica FORA do shell: não deve ter sidebar.
-  // guestGuard bloqueia acesso a essa rota se já houver sessão ativa.
   { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
 
   {
-    // Tudo que estiver em "children" é renderizado DENTRO do
-    // <router-outlet> do ShellComponent, com a sidebar sempre visível.
     path: '',
     component: ShellComponent,
-
-    // O guard aqui protege TODAS as rotas filhas de uma vez só —
-    // não precisamos repetir canActivate: [authGuard] em cada uma.
     canActivate: [authGuard],
-
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
-      // 'management' e 'occurrences-search' entram nas próximas etapas.
-      // Se alguma exigir admin especificamente, adicionamos
-      // canActivate: [adminGuard] só naquela rota filha, sem afetar as outras.
+
+      {
+        path: 'management',
+        component: ManagementComponent,
+        // adminGuard aqui protege TODA a área de gestão de uma vez:
+        // um funcionário comum nem consegue entrar em /management,
+        // muito menos em /management/departments.
+        canActivate: [adminGuard],
+        children: [
+          { path: '', redirectTo: 'departments', pathMatch: 'full' },
+          { path: 'departments', component: DepartmentsComponent },
+          { path: 'employees', component: EmployeesComponent },
+          { path: 'categories', component: CategoriesComponent },
+          // 'occurrences' entra na próximas etapa
+        ],
+      },
     ],
   },
 

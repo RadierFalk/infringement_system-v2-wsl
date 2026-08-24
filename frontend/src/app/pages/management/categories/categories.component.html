@@ -1,0 +1,101 @@
+<div class="categories-page">
+  <header class="page-header">
+    <h2>Categorias de Ocorrência</h2>
+    <button type="button" class="btn-primary" (click)="openCreateModal()">
+      + Nova categoria
+    </button>
+  </header>
+
+  <p *ngIf="isLoading" class="loading-placeholder">Carregando...</p>
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+  <p *ngIf="deleteErrorMessage" class="error-message">{{ deleteErrorMessage }}</p>
+
+  <div class="categories-list" *ngIf="!isLoading && categories.length > 0">
+    <div class="category-card" *ngFor="let category of categories">
+      <div class="category-row" (click)="toggleExpand(category.id)">
+        <div class="category-info">
+          <span class="category-name">{{ category.name }}</span>
+          <span class="category-description">{{ category.description }}</span>
+        </div>
+
+        <div class="category-meta">
+          <span class="rules-count">{{ category.sending_rules.length }} regra(s) de envio</span>
+          <button type="button" class="btn-link" (click)="openEditModal(category); $event.stopPropagation()">Editar</button>
+          <button type="button" class="btn-link btn-link-danger" (click)="requestDelete(category); $event.stopPropagation()">Excluir</button>
+        </div>
+      </div>
+
+      <!-- Área expandida: só renderiza quando essa categoria está selecionada -->
+      <div class="rules-panel" *ngIf="expandedCategoryId === category.id">
+        <table class="rules-table" *ngIf="category.sending_rules.length > 0">
+          <thead>
+            <tr>
+              <th>Destinatário</th>
+              <th>Tipo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let rule of category.sending_rules">
+              <td>{{ getRoleLabel(rule.role) }}</td>
+              <td>{{ getTypeLabel(rule.send_type) }}</td>
+              <td>
+                <button type="button" class="btn-link btn-link-danger" (click)="requestDeleteRule(category.id, rule.id)">
+                  Remover
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p *ngIf="category.sending_rules.length === 0" class="empty-state">
+          Nenhuma regra de envio cadastrada para essa categoria.
+        </p>
+
+        <!-- Mini-formulário pra adicionar uma nova regra, direto na linha expandida -->
+        <form class="add-rule-form" [formGroup]="ruleForm" (ngSubmit)="addSendingRule(category)">
+          <select formControlName="role">
+            <option value="" disabled>Destinatário</option>
+            <option *ngFor="let opt of roleOptions" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+
+          <select formControlName="send_type">
+            <option value="" disabled>Tipo</option>
+            <option *ngFor="let opt of typeOptions" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+
+          <button type="submit" class="btn-secondary-small">+ Adicionar regra</button>
+        </form>
+
+        <p *ngIf="ruleErrorMessage" class="error-message">{{ ruleErrorMessage }}</p>
+      </div>
+    </div>
+  </div>
+
+  <p *ngIf="!isLoading && categories.length === 0" class="empty-state">
+    Nenhuma categoria cadastrada ainda.
+  </p>
+
+  <app-category-form-modal
+    *ngIf="showFormModal"
+    [category]="categoryBeingEdited"
+    (saved)="onCategorySaved()"
+    (closed)="closeFormModal()"
+  ></app-category-form-modal>
+
+  <app-confirm-dialog
+    *ngIf="categoryPendingDelete"
+    title="Excluir categoria"
+    [message]="'Tem certeza? Isso também vai excluir todas as regras de envio dessa categoria: \'' + categoryPendingDelete.name + '\'.'"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  ></app-confirm-dialog>
+
+  <app-confirm-dialog
+    *ngIf="rulePendingDelete"
+    title="Remover regra de envio"
+    message="Tem certeza que deseja remover essa regra?"
+    (confirmed)="confirmDeleteRule()"
+    (cancelled)="cancelDeleteRule()"
+  ></app-confirm-dialog>
+</div>

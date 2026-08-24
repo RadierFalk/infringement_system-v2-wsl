@@ -94,3 +94,31 @@ def add_sending_rule(
     db.commit()
     db.refresh(rule)
     return rule
+
+@router.delete("/{category_id}/sending-rules/{rule_id}", status_code=204)
+def delete_sending_rule(
+    category_id: int,
+    rule_id: int,
+    db: Session = Depends(get_db),
+    current_user: Employee = Depends(require_admin),
+):
+    """
+    Remove uma regra de envio específica. Sem esse endpoint, o único jeito
+    de corrigir uma regra criada por engano seria excluir a categoria
+    inteira (o que apaga as regras em cascata, mas também perde o vínculo
+    com as ocorrências que usam essa categoria) — não é uma opção viável
+    pra um erro de digitação.
+    """
+    rule = (
+        db.query(OccurrenceCategorySendingRule)
+        .filter(
+            OccurrenceCategorySendingRule.id == rule_id,
+            OccurrenceCategorySendingRule.category_id == category_id,
+        )
+        .first()
+    )
+    if not rule:
+        raise HTTPException(status_code=404, detail="Regra de envio não encontrada")
+    
+    db.delete(rule)
+    db.commit()

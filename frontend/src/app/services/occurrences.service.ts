@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../core/services/api.service';
-import { Occurrence } from '../models/occurrence.interface';
-import { PaginatedResponse } from '../models/paginated-response.interface';
+import { ApiService } from 'src/app/core/services/api.service';
+import { Occurrence } from 'src/app/models/occurrence.interface';
+import { PaginatedResponse } from 'src/app/models/paginated-response.interface';
 
 // Parâmetros aceitos pelo GET /occurrences/ do backend.
 // Deixar isso tipado evita passar um filtro com nome errado sem perceber.
