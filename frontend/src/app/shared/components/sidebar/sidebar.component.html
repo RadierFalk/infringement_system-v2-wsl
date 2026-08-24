@@ -8,7 +8,7 @@
 
     <!-- *ngIf esconde o link inteiro do DOM (não é só um efeito visual de CSS)
          para usuários que não são admin. -->
-    <a *ngIf="isAdmin" routerLink="/management" routerLinkActive="active" class="nav-item">Gestão</a>
+    <a *ngIf="isAdmin" routerLink="/management/occurrences" routerLinkActive="active" class="nav-item">Gestão</a>
 
     <a routerLink="/occurrences-search" routerLinkActive="active" class="nav-item">Buscar Ocorrências</a>
   </nav>

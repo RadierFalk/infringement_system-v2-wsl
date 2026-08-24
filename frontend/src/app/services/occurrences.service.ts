@@ -1,24 +1,44 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+
 import { ApiService } from '../core/services/api.service';
 import { Occurrence } from '../models/occurrence.interface';
 import { PaginatedResponse } from '../models/paginated-response.interface';
 
-// Parâmetros aceitos pelo GET /occurrences/ do backend.
-// Deixar isso tipado evita passar um filtro com nome errado sem perceber.
 export interface OccurrenceFilters {
-  filter?: string; // busca textual (alias de filter_text no backend)
+  filter?: string;
   status?: string;
   category_id?: number;
   page?: number;
   size?: number;
 }
 
-@Injectable({ providedIn: 'root' })
-export class OccurrencesService {
-  constructor(private api: ApiService) {}
+export interface OccurrenceCreate {
+  title: string;
+  description?: string;
+  status?: string;
+  date: string;
+  employee_id: number;
+  file_id?: number;
+  category_id?: number;
+}
 
-  getAll(filters: OccurrenceFilters = {}): Observable<PaginatedResponse<Occurrence>> {
-    return this.api.get<PaginatedResponse<Occurrence>>('/occurrences/', filters);
+@Injectable({
+  providedIn: 'root',
+})
+export class OccurrencesService {
+  constructor(private api: ApiService) { }
+
+  getAll(
+    filters: OccurrenceFilters = {},
+  ): Observable<PaginatedResponse<Occurrence>> {
+    return this.api.get<PaginatedResponse<Occurrence>>(
+      '/occurrences/',
+      filters,
+    );
+  }
+
+  create(payload: OccurrenceCreate): Observable<Occurrence> {
+    return this.api.post<Occurrence>('/occurrences/', payload);
   }
 }
