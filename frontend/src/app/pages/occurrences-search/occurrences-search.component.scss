@@ -106,3 +106,8 @@
     &:disabled { opacity: 0.4; cursor: not-allowed; }
   }
 }
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

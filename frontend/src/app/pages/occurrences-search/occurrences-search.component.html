@@ -27,31 +27,33 @@
   <p *ngIf="isLoading" class="loading-placeholder">Carregando...</p>
   <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 
-  <table class="data-table" *ngIf="!isLoading && occurrences.length > 0">
-    <thead>
-      <tr>
-        <th>Título</th>
-        <th>Funcionário</th>
-        <th>Departamento</th>
-        <th>Categoria</th>
-        <th>Status</th>
-        <th>Data</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let occ of occurrences">
-        <td>
-          <strong>{{ occ.title }}</strong>
-          <small *ngIf="occ.description">{{ occ.description }}</small>
-        </td>
-        <td>{{ occ.employee.name }}</td>
-        <td>{{ occ.employee.department?.name || '—' }}</td>
-        <td>{{ occ.category?.name || '—' }}</td>
-        <td>{{ occ.status }}</td>
-        <td>{{ occ.date | date: 'dd/MM/yyyy' }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-scroll">
+    <table class="data-table" *ngIf="!isLoading && occurrences.length > 0">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Funcionário</th>
+          <th>Departamento</th>
+          <th>Categoria</th>
+          <th>Status</th>
+          <th>Data</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let occ of occurrences">
+          <td>
+            <strong>{{ occ.title }}</strong>
+            <small *ngIf="occ.description">{{ occ.description }}</small>
+          </td>
+          <td>{{ occ.employee.name }}</td>
+          <td>{{ occ.employee.department?.name || '—' }}</td>
+          <td>{{ occ.category?.name || '—' }}</td>
+          <td>{{ occ.status }}</td>
+          <td>{{ occ.date | date: 'dd/MM/yyyy' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <p *ngIf="!isLoading && occurrences.length === 0" class="empty-state">
     Nenhuma ocorrência encontrada.

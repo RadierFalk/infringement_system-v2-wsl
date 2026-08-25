@@ -6,6 +6,8 @@ import { ShellComponent } from './layout/shell/shell.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { AccessDeniedComponent } from './pages/access-denied/access-denied.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 import { ManagementComponent } from './pages/management/management.component';
 import { DepartmentsComponent } from './pages/management/departments/departments.component';
@@ -19,6 +21,7 @@ import { OccurrencesListComponent } from './pages/management/occurrences/list/oc
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+  { path: 'access-denied', component: AccessDeniedComponent, canActivate: [authGuard] },
 
   {
     path: '',
@@ -48,5 +51,6 @@ export const routes: Routes = [
     ],
   },
 
-  { path: '**', redirectTo: '/login' },
+  { path: 'not-found', component: NotFoundComponent },
+  { path: '**', redirectTo: '/not-found' },
 ];
