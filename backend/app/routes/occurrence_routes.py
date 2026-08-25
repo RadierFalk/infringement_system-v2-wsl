@@ -35,6 +35,15 @@ def list_occurrences(
         effective_department_id = current_user.department_id
 
     repo = OccurrenceRepository(db)
+    # Regra de segurança: funcionário comum NUNCA pode ver ocorrências de
+    # outro departamento, mesmo que tente manipular o parâmetro department_id
+    # na requisição. O valor vindo do cliente só é respeitado se quem está
+    # pedindo for admin — para não-admin, sobrescrevemos com o departamento
+    # do próprio usuário autenticado (dado que vem do token, não do cliente).
+    effective_department_id = department_id
+    if current_user.is_admin != "Y":
+        effective_department_id = current_user.department_id
+
     items, total = repo.get_filtered(
         filter_text=filter_text,
         status=status,

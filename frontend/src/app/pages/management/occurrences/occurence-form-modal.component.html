@@ -1,0 +1,47 @@
+<app-modal (closeRequested)="closed.emit()">
+  <h3 class="form-title">Nova ocorrência</h3>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field">
+      <label for="title">Título</label>
+      <input id="title" type="text" formControlName="title" placeholder="Ex: Atraso na entrega" />
+    </div>
+
+    <div class="field">
+      <label for="description">Descrição</label>
+      <textarea id="description" formControlName="description" rows="3"></textarea>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="date">Data</label>
+        <input id="date" type="date" formControlName="date" />
+      </div>
+
+      <div class="field">
+        <label for="employee_id">Funcionário</label>
+        <select id="employee_id" formControlName="employee_id">
+          <option [ngValue]="null" disabled>Selecione</option>
+          <option *ngFor="let emp of employees" [ngValue]="emp.id">{{ emp.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="category_id">Categoria (opcional)</label>
+      <select id="category_id" formControlName="category_id">
+        <option [ngValue]="null">Sem categoria</option>
+        <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+      </select>
+    </div>
+
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="closed.emit()">Cancelar</button>
+      <button type="submit" class="btn-primary" [disabled]="isSaving">
+        {{ isSaving ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</app-modal>
