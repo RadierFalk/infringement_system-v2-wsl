@@ -1,0 +1,151 @@
+@import '../../../../../styles/variables';
+
+.occurrences-list-page {
+  padding: 0;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $space-6;
+
+  h1 {
+    margin: 0;
+    font-size: $font-size-2xl;
+    color: $color-text-primary;
+  }
+
+  p {
+    margin: $space-1 0 0;
+    color: $color-text-secondary;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: $space-3;
+}
+
+.back-button {
+  padding: $space-2 $space-4;
+  text-decoration: none;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+  background: transparent;
+  font-size: $font-size-sm;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: $color-text-secondary;
+    color: $color-text-primary;
+  }
+}
+
+.add-button {
+  padding: $space-2 $space-4;
+  text-decoration: none;
+  border-radius: $radius-md;
+  background-color: $color-primary;
+  color: #fff;
+  font-size: $font-size-sm;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+}
+
+.content-card {
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-6;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: $space-3 $space-4;
+  text-align: left;
+  border-bottom: 1px solid $color-border;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+}
+
+th {
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+}
+
+td strong {
+  display: block;
+}
+
+td small {
+  display: block;
+  margin-top: $space-1;
+  color: $color-text-muted;
+}
+
+.status {
+  display: inline-block;
+  padding: $space-1 $space-2;
+  border-radius: $radius-sm;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.state-message {
+  padding: $space-8;
+  text-align: center;
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+}
+
+.state-message.error {
+  color: $color-danger;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $space-4;
+  margin-top: $space-6;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+
+  button {
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: transparent;
+    color: $color-text-primary;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background-color: $color-surface-hover;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+  }
+}

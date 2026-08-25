@@ -1,29 +1,46 @@
-@import '../../../../styles/variables';
+@import '../../../styles/variables';
 
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $space-4;
+  margin-bottom: $space-5;
 
-  h2 {
+  h1 {
+    margin: 0 0 $space-1;
+    font-size: $font-size-2xl;
+  }
+
+  p {
     margin: 0;
-    font-size: $font-size-xl;
+    color: $color-text-secondary;
   }
 }
 
+.filters {
+  display: flex;
+  gap: $space-3;
+  margin-bottom: $space-5;
+  flex-wrap: wrap;
+}
+
 .search-input {
-  width: 100%;
-  max-width: 320px;
+  flex: 1;
+  min-width: 240px;
   padding: $space-3;
   border-radius: $radius-md;
   border: 1px solid $color-border;
   background-color: $color-surface;
   color: $color-text-primary;
   font-size: $font-size-sm;
-  margin-bottom: $space-5;
 
   &:focus { outline: none; border-color: $color-primary; }
+}
+
+.filter-select {
+  padding: $space-3;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-text-primary;
+  font-size: $font-size-sm;
 }
 
 .loading-placeholder,
@@ -62,38 +79,12 @@
   tr:last-child td {
     border-bottom: none;
   }
-}
 
-.actions-cell {
-  display: flex;
-  gap: $space-3;
-}
-
-.btn-link {
-  background: none;
-  border: none;
-  color: $color-primary;
-  font-size: $font-size-sm;
-  cursor: pointer;
-  padding: 0;
-
-  &:hover { text-decoration: underline; }
-}
-
-.btn-link-danger {
-  color: $color-danger;
-}
-
-.btn-primary {
-  padding: $space-2 $space-4;
-  border: none;
-  border-radius: $radius-md;
-  background-color: $color-primary;
-  color: #fff;
-  font-size: $font-size-sm;
-  cursor: pointer;
-
-  &:hover { background-color: $color-primary-hover; }
+  td small {
+    display: block;
+    margin-top: $space-1;
+    color: $color-text-muted;
+  }
 }
 
 .pagination {

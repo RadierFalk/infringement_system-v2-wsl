@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { APP_ROUTES } from '../constants/routes.constants';
 
 /**
  * Guarda o caminho inverso do authGuard: protege a tela de LOGIN.
@@ -12,7 +13,7 @@ export const guestGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   if (authService.isLoggedIn()) {
-    router.navigate(['/dashboard']);
+    router.navigate([APP_ROUTES.DASHBOARD]);
     return false;
   }
 

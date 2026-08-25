@@ -18,29 +18,31 @@
   <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
   <p *ngIf="deleteErrorMessage" class="error-message">{{ deleteErrorMessage }}</p>
 
-  <table class="data-table" *ngIf="!isLoading && employees.length > 0">
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Usuário</th>
-        <th>Departamento</th>
-        <th>Admin</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let emp of employees">
-        <td>{{ emp.name }}</td>
-        <td>{{ emp.username }}</td>
-        <td>{{ emp.department?.name || '—' }}</td>
-        <td>{{ emp.is_admin ? 'Sim' : 'Não' }}</td>
-        <td class="actions-cell">
-          <button type="button" class="btn-link" (click)="openEditModal(emp)">Editar</button>
-          <button type="button" class="btn-link btn-link-danger" (click)="requestDelete(emp)">Excluir</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-scroll">
+    <table class="data-table" *ngIf="!isLoading && employees.length > 0">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Usuário</th>
+          <th>Departamento</th>
+          <th>Admin</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let emp of employees">
+          <td>{{ emp.name }}</td>
+          <td>{{ emp.username }}</td>
+          <td>{{ emp.department?.name || '—' }}</td>
+          <td>{{ emp.is_admin ? 'Sim' : 'Não' }}</td>
+          <td class="actions-cell">
+            <button type="button" class="btn-link" (click)="openEditModal(emp)">Editar</button>
+            <button type="button" class="btn-link btn-link-danger" (click)="requestDelete(emp)">Excluir</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <p *ngIf="!isLoading && employees.length === 0" class="empty-state">
     Nenhum funcionário encontrado.

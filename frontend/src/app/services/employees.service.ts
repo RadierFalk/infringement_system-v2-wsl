@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+
 import { ApiService } from 'src/app/core/services/api.service';
 import { Employee, EmployeePayload } from 'src/app/models/employee.interface';
 import { PaginatedResponse } from 'src/app/models/paginated-response.interface';
 
+export { Employee } from '../models/employee.interface';
+
 export interface EmployeeFilters {
-  filter?: string; // busca textual — o backend usa alias "filter" pra filter_text
+  filter?: string;
   page?: number;
   size?: number;
 }
@@ -14,8 +17,13 @@ export interface EmployeeFilters {
 export class EmployeesService {
   constructor(private api: ApiService) {}
 
-  getAll(filters: EmployeeFilters = {}): Observable<PaginatedResponse<Employee>> {
-    return this.api.get<PaginatedResponse<Employee>>('/employees/', filters);
+  getAll(
+    filters: EmployeeFilters = {},
+  ): Observable<PaginatedResponse<Employee>> {
+    return this.api.get<PaginatedResponse<Employee>>(
+      '/employees/',
+      filters,
+    );
   }
 
   create(payload: EmployeePayload): Observable<Employee> {

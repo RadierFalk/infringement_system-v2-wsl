@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { APP_ROUTES } from '../../../core/constants/routes.constants';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,6 +12,10 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
+  // Exposto como propriedade pública para o template poder usar
+  // [routerLink]="routes.DASHBOARD" em vez de string literal.
+  routes = APP_ROUTES;
+  
   get userInfo() {
     return this.authService.getUserInfo();
   }
@@ -26,6 +31,6 @@ export class SidebarComponent {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate([APP_ROUTES.LOGIN]);
   }
 }

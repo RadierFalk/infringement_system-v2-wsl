@@ -80,3 +80,8 @@
 
   &:hover { background-color: $color-primary-hover; }
 }
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

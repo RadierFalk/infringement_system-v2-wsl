@@ -10,7 +10,7 @@ class EmployeeBase(BaseModel):
     global_id: Optional[str] = None
     company: Optional[str] = None
     role: Optional[str] = None
-    department_id: int
+    department_id: Optional[int] = None
 
 
 class EmployeeCreate(EmployeeBase):

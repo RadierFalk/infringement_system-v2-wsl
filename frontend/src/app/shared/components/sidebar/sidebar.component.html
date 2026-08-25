@@ -4,13 +4,9 @@
   </div>
 
   <nav class="sidebar-nav">
-    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">Dashboard</a>
-
-    <!-- *ngIf esconde o link inteiro do DOM (não é só um efeito visual de CSS)
-         para usuários que não são admin. -->
-    <a *ngIf="isAdmin" routerLink="/management" routerLinkActive="active" class="nav-item">Gestão</a>
-
-    <a routerLink="/occurrences-search" routerLinkActive="active" class="nav-item">Buscar Ocorrências</a>
+    <a [routerLink]="routes.DASHBOARD" routerLinkActive="active" class="nav-item">Dashboard</a>
+    <a *ngIf="isAdmin" [routerLink]="routes.MANAGEMENT.ROOT" routerLinkActive="active" class="nav-item">Gestão</a>
+    <a [routerLink]="routes.OCCURRENCES_SEARCH" routerLinkActive="active" class="nav-item">Buscar Ocorrências</a>
   </nav>
 
   <div class="sidebar-footer">

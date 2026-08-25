@@ -1,0 +1,113 @@
+<div class="occurrences-list-page">
+
+  <header class="page-header">
+    <div>
+      <h1>Occurrences</h1>
+      <p>Visualizar e gerenciar ocorrências.</p>
+    </div>
+
+    <div class="header-actions">
+      <a class="back-button" routerLink="/management/occurrences">
+        ← Voltar
+      </a>
+
+      <a class="add-button" routerLink="/management/occurrences/add">
+        + Add Occurrence
+      </a>
+    </div>
+  </header>
+
+  <section class="content-card">
+
+    <div *ngIf="loading" class="state-message">
+      Carregando ocorrências...
+    </div>
+
+    <div *ngIf="error && !loading" class="state-message error">
+      {{ error }}
+    </div>
+
+    <div
+      *ngIf="!loading && !error && occurrences.length === 0"
+      class="state-message"
+    >
+      Nenhuma ocorrência encontrada.
+    </div>
+
+    <div
+      *ngIf="!loading && !error && occurrences.length > 0"
+      class="table-wrapper"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Funcionário</th>
+            <th>Categoria</th>
+            <th>Status</th>
+            <th>Data</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let occurrence of occurrences">
+            <td>{{ occurrence.id }}</td>
+
+            <td>
+              <strong>{{ occurrence.title }}</strong>
+              <small *ngIf="occurrence.description">
+                {{ occurrence.description }}
+              </small>
+            </td>
+
+            <td>
+              {{ occurrence.employee.name }}
+            </td>
+
+            <td>
+              {{ occurrence.category?.name || '—' }}
+            </td>
+
+            <td>
+              <span class="status">
+                {{ getStatusLabel(occurrence.status) }}
+              </span>
+            </td>
+
+            <td>
+              {{ occurrence.date | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div
+      *ngIf="!loading && !error && total > 0"
+      class="pagination"
+    >
+      <button
+        type="button"
+        (click)="previousPage()"
+        [disabled]="page === 1"
+      >
+        Previous
+      </button>
+
+      <span>
+        Page {{ page }}
+      </span>
+
+      <button
+        type="button"
+        (click)="nextPage()"
+        [disabled]="page * size >= total"
+      >
+        Next
+      </button>
+    </div>
+
+  </section>
+
+</div>

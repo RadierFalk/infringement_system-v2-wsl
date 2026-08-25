@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { APP_ROUTES } from '../../core/constants/routes.constants';
 
 @Component({
   selector: 'app-login',
@@ -47,7 +48,7 @@ export class LoginComponent {
     this.authService.login({ username, password }, rememberMe).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/dashboard']);
+        this.router.navigate([APP_ROUTES.DASHBOARD]);
       },
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;

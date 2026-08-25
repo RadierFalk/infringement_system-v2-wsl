@@ -20,30 +20,30 @@ class OccurrenceRepository(BaseRepository):
         )
 
     def get_filtered(
-        self,
-        filter_text: Optional[str] = None,
-        status: Optional[str] = None,
-        category_id: Optional[int] = None,
-        department_id: Optional[int] = None,
-        page: int = 1,
-        size: int = 10,
-    ) -> Tuple[List[Occurrence], int]:
+            self,
+            filter_text: Optional[str] = None,
+            status: Optional[str] = None,
+            category_id: Optional[int] = None,
+            department_id: Optional[int] = None,
+            page: int = 1,
+            size: int = 10,
+        ) -> Tuple[List[Occurrence], int]:
         query = self.db.query(Occurrence).options(
             joinedload(Occurrence.employee).joinedload(Employee.department),
             joinedload(Occurrence.file),
             joinedload(Occurrence.category),
         )
 
-        # O join com Employee é necessário tanto para a busca textual (filter_text,
-        # que já buscava por nome de funcionário/departamento) quanto para o novo
-        # filtro por departamento. Evitamos fazer o join duas vezes: se filter_text
-        # já foi aplicado, o join já existe na query.
-        needs_employee_join = filter_text or department_id
-        if needs_employee_join:
+        # Join explícito é obrigatório sempre que formos filtrar por uma coluna
+        # de Employee (department_id) ou por texto que também busca em
+        # Employee/Department. Sem isso, o SQLAlchemy adiciona Employee "solto"
+        # no FROM (cross join) em vez de conectar via occurrence.employee_id —
+        # o filtro "roda" sem erro, mas devolve linhas erradas.
+        if filter_text or department_id:
             query = query.join(Employee)
-        
+
         if filter_text:
-            query = query.join(Employee).join(Department).filter(
+            query = query.join(Department).filter(
                 or_(
                     Occurrence.title.ilike(f"%{filter_text}%"),
                     Occurrence.description.ilike(f"%{filter_text}%"),
