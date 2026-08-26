@@ -42,6 +42,6 @@ export class OccurrencesService {
     return this.api.post<Occurrence>('/occurrences/', payload);
   }
   delete(id: number): Observable<void> {
-    return this.api.delete<void>('/occurrences/${id}');
+    return this.api.delete<void>(`/occurrences/${id}`);
   }
 }

@@ -149,3 +149,25 @@ td small {
     }
   }
 }
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.btn-link.btn-link-danger {
+  display: inline-block;
+  padding: $space-1 $space-2;
+  border-radius: $radius-sm;
+  background-color: $color-danger;
+  border: 1px solid $color-danger;
+  font-size: $font-size-xs;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-link.btn-link-danger:hover {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+  color: #fff;
+}

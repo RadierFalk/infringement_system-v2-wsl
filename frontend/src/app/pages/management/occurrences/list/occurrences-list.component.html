@@ -47,6 +47,7 @@
             <th>Categoria</th>
             <th>Status</th>
             <th>Data</th>
+            <th>Ações</th>
           </tr>
         </thead>
 
@@ -78,6 +79,16 @@
             <td>
               {{ occurrence.date | date:'dd/MM/yyyy HH:mm' }}
             </td>
+
+            <td class="actions-cell">
+              <button
+                type="button"
+                class="btn-link btn-link-danger"
+                (click)="requestDelete(occurrence)"
+              >
+              Excluir
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -108,6 +119,13 @@
       </button>
     </div>
 
+    <app-confirm-dialog
+      *ngIf="occurrencePendingDelete"
+      title="Excluir ocorrência"
+      [message]="'Tem certeza que deseja excluir a ocorrência \'' + occurrencePendingDelete.title + '\'?'"
+      (confirmed)="confirmDelete()"
+      (cancelled)="cancelDelete()"
+      ></app-confirm-dialog>
   </section>
 
 </div>

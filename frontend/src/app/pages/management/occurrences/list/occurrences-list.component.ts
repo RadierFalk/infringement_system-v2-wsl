@@ -2,21 +2,33 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import { Occurrence, StatusEnum } from '../../../../models/occurrence.interface';
-import { OccurrenceFilters, OccurrencesService } from '../../../../services/occurrences.service';
+import {
+  Occurrence,
+  StatusEnum,
+} from '../../../../models/occurrence.interface';
+
+import {
+  OccurrenceFilters,
+  OccurrencesService,
+} from '../../../../services/occurrences.service';
+
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-occurrences-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ConfirmDialogComponent],
   templateUrl: './occurrences-list.component.html',
   styleUrls: ['./occurrences-list.component.scss'],
 })
 export class OccurrencesListComponent implements OnInit {
   occurrences: Occurrence[] = [];
+
   loading = false;
   error = '';
+
+  occurrencePendingDelete: Occurrence | null = null;
+  deleteErrorMessage = '';
 
   page = 1;
   size = 10;
@@ -66,5 +78,34 @@ export class OccurrencesListComponent implements OnInit {
       this.page--;
       this.loadOccurrences();
     }
+  }
+
+  requestDelete(occurrence: Occurrence): void {
+    this.occurrencePendingDelete = occurrence;
+    this.deleteErrorMessage = '';
+  }
+
+  cancelDelete(): void {
+    this.occurrencePendingDelete = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.occurrencePendingDelete?.id) {
+      return;
+    }
+
+    const occurrenceId = this.occurrencePendingDelete?.id;
+
+    this.occurrencesService.delete(occurrenceId).subscribe({
+      next: () => {
+        this.occurrencePendingDelete = null;
+        this.loadOccurrences();
+      },
+      error: () => {
+        this.deleteErrorMessage =
+          "Não foi possível excluir a ocorrência.";
+        this.occurrencePendingDelete = null;
+      },
+    });
   }
 }
