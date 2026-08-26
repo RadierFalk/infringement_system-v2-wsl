@@ -41,7 +41,7 @@ export class OccurrenceAddComponent implements OnInit {
     description: '',
     date: '',
     employee_id: 0,
-    category_id: null,
+    category_id: 0,
   };
 
   constructor(

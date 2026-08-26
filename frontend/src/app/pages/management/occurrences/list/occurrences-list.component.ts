@@ -2,14 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import {
-  Occurrence,
-  StatusEnum,
-} from '../../../../models/occurrence.interface';
-import {
-  OccurrenceFilters,
-  OccurrencesService,
-} from '../../../../services/occurrences.service';
+import { Occurrence, StatusEnum } from '../../../../models/occurrence.interface';
+import { OccurrenceFilters, OccurrencesService } from '../../../../services/occurrences.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-occurrences-list',
