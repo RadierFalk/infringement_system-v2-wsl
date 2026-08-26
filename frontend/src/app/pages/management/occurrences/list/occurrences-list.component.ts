@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import {
   Occurrence,
@@ -14,15 +15,25 @@ import {
 
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
+import { CategoriesService } from '../../../../services/categories.service';
+import { OccurrenceCategory } from '../../../../models/occurrence-category.interface';
+
 @Component({
   selector: 'app-occurrences-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, ConfirmDialogComponent],
+  imports: [CommonModule, RouterLink, ConfirmDialogComponent, FormsModule],
   templateUrl: './occurrences-list.component.html',
   styleUrls: ['./occurrences-list.component.scss'],
 })
 export class OccurrencesListComponent implements OnInit {
   occurrences: Occurrence[] = [];
+
+  categories: OccurrenceCategory[] = [];
+
+  selectedStatus = '';
+  selectedCategoryId: number | null = null;
+
+  statusOptions = Object.values(StatusEnum)
 
   loading = false;
   error = '';
@@ -34,10 +45,22 @@ export class OccurrencesListComponent implements OnInit {
   size = 10;
   total = 0;
 
-  constructor(private occurrencesService: OccurrencesService) {}
+  constructor(
+    private occurrencesService: OccurrencesService,
+    private categoriesService: CategoriesService
+  ) {}
 
   ngOnInit(): void {
+    this.loadCategoriesForFilter();
     this.loadOccurrences();
+  }
+
+  loadCategoriesForFilter(): void {
+    this.categoriesService.getAll().subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+    });
   }
 
   loadOccurrences(): void {
@@ -45,6 +68,8 @@ export class OccurrencesListComponent implements OnInit {
     this.error = '';
 
     const filters: OccurrenceFilters = {
+      status: this.selectedStatus || undefined,
+      category_id: this.selectedCategoryId || undefined,
       page: this.page,
       size: this.size,
     };
@@ -107,5 +132,10 @@ export class OccurrencesListComponent implements OnInit {
         this.occurrencePendingDelete = null;
       },
     });
+  }
+
+  onFilterChange(): void {
+    this.page = 1;
+    this.loadOccurrences();
   }
 }

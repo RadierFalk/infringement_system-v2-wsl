@@ -17,6 +17,40 @@
     </div>
   </header>
 
+  <div class="filters">
+
+    <select
+      class="filter-select"
+      [(ngModel)]="selectedStatus"
+      (ngModelChange)="onFilterChange()"
+    >
+      <option
+        *ngFor="let status of statusOptions"
+        [value]="status"
+      >
+        {{ status }}
+      </option>
+    </select>
+
+    <select
+      class="filter-select"
+      [(ngModel)]="selectedCategoryId"
+      (ngModelChange)="onFilterChange()"
+    >
+      <option [ngValue]="null">
+        Todas as categorias
+      </option>
+
+      <option
+      *ngFor="let category of categories"
+      [ngValue]="category.id"
+      >
+        {{ category.name }}
+      </option>
+    </select>
+
+  </div>
+
   <section class="content-card">
 
     <div *ngIf="loading" class="state-message">

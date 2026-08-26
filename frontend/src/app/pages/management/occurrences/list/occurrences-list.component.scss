@@ -4,6 +4,27 @@
   padding: 0;
 }
 
+.filters {
+  display: flex;
+  gap: $space-3;
+  margin-bottom: $space-5;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: $space-3;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-text-primary;
+  font-size: $font-size-sm;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
 .page-header {
   display: flex;
   justify-content: space-between;
