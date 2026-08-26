@@ -1,0 +1,19 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <span class="logo">Infringement System</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a [routerLink]="routes.DASHBOARD" routerLinkActive="active" class="nav-item">Dashboard</a>
+    <a *ngIf="isAdmin" [routerLink]="routes.MANAGEMENT.ROOT" routerLinkActive="active" class="nav-item">Gestão</a>
+    <a [routerLink]="routes.OCCURRENCES_SEARCH" routerLinkActive="active" class="nav-item">Buscar Ocorrências</a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <span class="user-name">{{ userInfo?.name }}</span>
+      <span class="user-role">{{ isAdmin ? 'Administrador' : 'Funcionário' }}</span>
+    </div>
+    <button class="logout-button" (click)="logout()">Sair</button>
+  </div>
+</aside>

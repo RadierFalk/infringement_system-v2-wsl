@@ -1,0 +1,14 @@
+<div class="shell">
+  <app-sidebar></app-sidebar>
+
+  <main class="shell-content">
+    <!-- Este é o router-outlet INTERNO do shell. É aqui que HomeComponent,
+         e futuramente DashboardComponent, ManagementComponent etc. são
+         renderizados — sempre com a sidebar visível ao lado. -->
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Fica fora do fluxo normal (position: fixed no CSS dele),
+       então pode ficar aqui sem afetar o layout do resto. -->
+  <app-loading></app-loading>
+</div>

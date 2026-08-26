@@ -1,0 +1,63 @@
+<div class="dashboard">
+  <header class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p>Bem-vindo(a), {{ userInfo?.name }}.</p>
+  </header>
+
+  <!-- Estado de carregamento: evita mostrar cards zerados por um
+       instante enquanto a requisição ainda está em andamento. -->
+  <div *ngIf="isLoading" class="loading-placeholder">Carregando dados...</div>
+
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+  <ng-container *ngIf="!isLoading && !errorMessage">
+    <!-- Card com o total geral -->
+    <div class="total-card">
+      <span class="total-number">{{ totalOccurrences }}</span>
+      <span class="total-label">Ocorrências no total</span>
+    </div>
+
+    <!-- Um card por status, gerado dinamicamente a partir do array
+         statusCounts montado no .ts -->
+    <div class="status-grid">
+      <div class="status-card" *ngFor="let item of statusCounts" [ngClass]="item.cssClass">
+        <span class="status-count">{{ item.count }}</span>
+        <span class="status-label">{{ item.label }}</span>
+
+        <!-- Barra de proporção: a largura em % reflete o peso desse
+             status dentro do total de ocorrências carregadas. -->
+        <div class="status-bar">
+          <div class="status-bar-fill" [style.width.%]="getPercentage(item.count)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela com as 5 ocorrências mais recentes -->
+    <div class="recent-section">
+      <h2>Ocorrências recentes</h2>
+
+      <table class="recent-table" *ngIf="recentOccurrences.length > 0; else emptyState">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Funcionário</th>
+            <th>Status</th>
+            <th>Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let occurrence of recentOccurrences">
+            <td>{{ occurrence.title }}</td>
+            <td>{{ occurrence.employee.name }}</td>
+            <td>{{ occurrence.status }}</td>
+            <td>{{ occurrence.date | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptyState>
+        <p class="empty-state">Nenhuma ocorrência registrada ainda.</p>
+      </ng-template>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,62 @@
+<div class="departments-page">
+  <header class="page-header">
+    <h2>Departamentos</h2>
+    <button type="button" class="btn-primary" (click)="openCreateModal()">
+      + Novo departamento
+    </button>
+  </header>
+
+  <p *ngIf="isLoading" class="loading-placeholder">Carregando...</p>
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+  <p *ngIf="deleteErrorMessage" class="error-message">{{ deleteErrorMessage }}</p>
+
+  <div class="table-scroll">
+    <table class="data-table" *ngIf="!isLoading && departments.length > 0">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail do gestor</th>
+          <th>Diretor</th>
+          <th>Funcionários</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dept of departments">
+          <td>{{ dept.name }}</td>
+          <td>{{ dept.manager_email || '—' }}</td>
+          <td>{{ dept.director_name || '—' }}</td>
+          <td>{{ dept.employee_count }}</td>
+          <td class="actions-cell">
+            <button type="button" class="btn-link" (click)="openEditModal(dept)">Editar</button>
+            <button type="button" class="btn-link btn-link-danger" (click)="requestDelete(dept)">Excluir</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p *ngIf="!isLoading && departments.length === 0" class="empty-state">
+    Nenhum departamento cadastrado ainda.
+  </p>
+
+  <!-- O modal só é INSTANCIADO no DOM quando showFormModal é true.
+       Isso importa: o ngOnChanges do form modal só dispara de novo
+       (repreenchendo o form) quando o componente é recriado, o que
+       acontece justamente porque *ngIf remove e recria o componente
+       a cada abertura. -->
+  <app-department-form-modal
+    *ngIf="showFormModal"
+    [department]="departmentBeingEdited"
+    (saved)="onDepartmentSaved()"
+    (closed)="closeFormModal()"
+  ></app-department-form-modal>
+
+  <app-confirm-dialog
+    *ngIf="departmentPendingDelete"
+    title="Excluir departamento"
+    [message]="'Tem certeza que deseja excluir \'' + departmentPendingDelete.name + '\'?'"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  ></app-confirm-dialog>
+</div>

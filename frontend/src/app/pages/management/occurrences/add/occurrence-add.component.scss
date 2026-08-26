@@ -1,0 +1,127 @@
+@import '../../../../../styles/variables';
+
+.occurrence-add-page {
+  padding: 0; // o padding já vem do .shell-content (ShellComponent) e do management.component
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $space-6;
+
+  h1 {
+    margin: 0;
+    font-size: $font-size-2xl;
+    color: $color-text-primary;
+  }
+
+  p {
+    margin: $space-1 0 0;
+    color: $color-text-secondary;
+  }
+}
+
+.back-button,
+.cancel-button {
+  padding: $space-2 $space-4;
+  text-decoration: none;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+  background: transparent;
+  font-size: $font-size-sm;
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: $color-text-secondary;
+    color: $color-text-primary;
+  }
+}
+
+.form-card {
+  max-width: 800px;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-6;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: $space-4;
+
+  label {
+    margin-bottom: $space-2;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+  }
+
+  input,
+  textarea,
+  select {
+    padding: $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background-color: $color-background;
+    color: $color-text-primary;
+    font-size: $font-size-base;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-3;
+  margin-top: $space-6;
+
+  button {
+    padding: $space-2 $space-4;
+    border: none;
+    border-radius: $radius-md;
+    background-color: $color-primary;
+    color: #fff;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    transition: background-color 0.15s;
+
+    &:hover:not(:disabled) {
+      background-color: $color-primary-hover;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.state-message {
+  padding: $space-4;
+  margin-bottom: $space-4;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.state-message.error {
+  color: $color-danger;
+  background-color: rgba($color-danger, 0.1);
+}
+
+.state-message.success {
+  color: $color-success;
+  background-color: rgba($color-success, 0.1);
+}

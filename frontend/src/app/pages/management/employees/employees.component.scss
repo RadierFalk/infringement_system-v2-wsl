@@ -1,0 +1,122 @@
+@import '../../../../styles/variables';
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $space-4;
+
+  h2 {
+    margin: 0;
+    font-size: $font-size-xl;
+  }
+}
+
+.search-input {
+  width: 100%;
+  max-width: 320px;
+  padding: $space-3;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-text-primary;
+  font-size: $font-size-sm;
+  margin-bottom: $space-5;
+
+  &:focus { outline: none; border-color: $color-primary; }
+}
+
+.loading-placeholder,
+.empty-state {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+}
+
+.error-message {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin-bottom: $space-4;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  overflow: hidden;
+  margin-bottom: $space-4;
+
+  th, td {
+    text-align: left;
+    padding: $space-3 $space-4;
+    font-size: $font-size-sm;
+    border-bottom: 1px solid $color-border;
+  }
+
+  th {
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.actions-cell {
+  display: flex;
+  gap: $space-3;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: $color-primary;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover { text-decoration: underline; }
+}
+
+.btn-link-danger {
+  color: $color-danger;
+}
+
+.btn-primary {
+  padding: $space-2 $space-4;
+  border: none;
+  border-radius: $radius-md;
+  background-color: $color-primary;
+  color: #fff;
+  font-size: $font-size-sm;
+  cursor: pointer;
+
+  &:hover { background-color: $color-primary-hover; }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+
+  button {
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: transparent;
+    color: $color-text-primary;
+    cursor: pointer;
+
+    &:hover:not(:disabled) { background-color: $color-surface-hover; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

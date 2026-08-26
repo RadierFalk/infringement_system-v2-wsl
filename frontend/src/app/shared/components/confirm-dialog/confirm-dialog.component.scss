@@ -1,0 +1,40 @@
+@import '../../../../styles/variables';
+
+.confirm-title {
+  margin: 0 0 $space-3;
+  font-size: $font-size-lg;
+}
+
+.confirm-message {
+  margin: 0 0 $space-5;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-3;
+}
+
+.btn-secondary {
+  padding: $space-2 $space-4;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  background: transparent;
+  color: $color-text-secondary;
+  cursor: pointer;
+
+  &:hover { border-color: $color-text-secondary; color: $color-text-primary; }
+}
+
+.btn-danger {
+  padding: $space-2 $space-4;
+  border: none;
+  border-radius: $radius-md;
+  background-color: $color-danger;
+  color: #fff;
+  cursor: pointer;
+
+  &:hover { opacity: 0.9; }
+}

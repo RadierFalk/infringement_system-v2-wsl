@@ -1,0 +1,24 @@
+@import '../../../styles/variables';
+
+.shell {
+  display: flex;
+  height: 100vh;
+}
+
+.shell-content {
+  flex: 1;
+  overflow-y: auto; // permite rolar o conteúdo sem mover a sidebar
+  padding: $space-6;
+}
+
+@media (max-width: 768px) {
+  .shell {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .shell-content {
+    padding: $space-4;
+  }
+}
