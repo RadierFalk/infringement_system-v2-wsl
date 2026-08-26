@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { EmployeesService } from '../../../services/employees.service';
-import { Employee } from '../../../models/employee.interface';
+import { Employee, UserType } from '../../../models/employee.interface';
 import { Department } from '../../../models/department.interface';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-employee-form-modal',
@@ -28,7 +29,7 @@ export class EmployeeFormModalComponent implements OnChanges {
   isSaving = false;
   errorMessage = '';
 
-  constructor(private fb: FormBuilder, private employeesService: EmployeesService) {
+  constructor(private fb: FormBuilder, private employeesService: EmployeesService, private authService: AuthService) {
     this.form = this.fb.group({
       name: ['', Validators.required],
       username: ['', Validators.required],
@@ -38,8 +39,14 @@ export class EmployeeFormModalComponent implements OnChanges {
       role: [''],
       department_id: [null, Validators.required],
       password: [''], // required é adicionado/removido dinamicamente em ngOnChanges
-      is_admin: [false],
+      user_type: ['normal' as UserType, Validators.required],
     });
+  }
+
+  // Só quem já é super_admin pode PROMOVER outra pessoa a super_admin —
+  // controla se a opção aparece no <select> do template.
+  get canAssignSuperAdmin(): boolean {
+    return this.authService.isSuperAdmin();
   }
 
   ngOnChanges(): void {
@@ -57,7 +64,7 @@ export class EmployeeFormModalComponent implements OnChanges {
         role: this.employee.role ?? '',
         department_id: this.employee.department_id,
         password: '',
-        is_admin: this.employee.is_admin,
+        user_type: this.employee.user_type,
       });
       passwordControl.clearValidators();
     } else {

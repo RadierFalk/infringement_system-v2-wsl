@@ -1,5 +1,6 @@
 import { Department } from '../models/department.interface';
 
+export type UserType = 'super_admin' | 'admin' | 'normal';
 // Espelha EmployeeRead do backend. is_admin já vem como boolean aqui
 // (a conversão de "Y"/"N" pra true/false é feita pelo backend, na
 // função _to_employee_read do employee_routes.py — o frontend nunca
@@ -13,7 +14,7 @@ export interface Employee {
     company?: string;
     role?: string;
     department_id: number;
-    is_admin: boolean;
+    user_type: UserType;
     department?: Department;
 }
 
@@ -29,5 +30,5 @@ export interface EmployeePayload {
     role?: string;
     department_id: number;
     password?: string;
-    is_admin: boolean;
+    user_type: UserType;
 }

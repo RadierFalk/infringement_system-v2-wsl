@@ -147,4 +147,13 @@ export class EmployeesComponent implements OnInit {
       },
     });
   }
+
+  userTypeLabel(userType: string): string {
+    const labels: Record<string, string> = {
+      super_admin: 'Super Administrador',
+      admin: 'Administrador',
+      normal: 'Funcionário',
+    };
+    return labels[userType] ?? userType;
+  }
 }

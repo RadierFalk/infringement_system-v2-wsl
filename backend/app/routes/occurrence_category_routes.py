@@ -10,7 +10,7 @@ from app.schemas import (
     SendingRuleCreate,
     SendingRuleRead,
 )
-from app.dependencies.auth import get_current_user, require_admin
+from app.dependencies.auth import get_current_user, require_super_admin
 from app.models import Employee, OccurrenceCategorySendingRule
 
 router = APIRouter(prefix="/occurrence-categories", tags=["occurrence-categories"])
@@ -42,7 +42,7 @@ def get_category(
 def create_category(
     payload: OccurrenceCategoryCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = OccurrenceCategoryRepository(db)
     return repo.create(payload.model_dump())
@@ -53,7 +53,7 @@ def update_category(
     id: int,
     payload: OccurrenceCategoryCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = OccurrenceCategoryRepository(db)
     updated = repo.update(id, payload.model_dump())
@@ -66,7 +66,7 @@ def update_category(
 def delete_category(
     id: int,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = OccurrenceCategoryRepository(db)
     if not repo.delete(id):
@@ -78,7 +78,7 @@ def add_sending_rule(
     category_id: int,
     payload: SendingRuleCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = OccurrenceCategoryRepository(db)
     category = repo.get(category_id)
@@ -100,7 +100,7 @@ def delete_sending_rule(
     category_id: int,
     rule_id: int,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     """
     Remove uma regra de envio específica. Sem esse endpoint, o único jeito

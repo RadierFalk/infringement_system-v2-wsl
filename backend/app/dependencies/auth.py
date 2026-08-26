@@ -6,6 +6,7 @@ from app.database import get_db
 from app.core.security import decode_access_token
 from app.repositories import EmployeeRepository
 from app.models import Employee
+from app.models.employee import UserType
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -19,7 +20,6 @@ def get_current_user(
         detail="Credenciais inválidas ou expiradas",
         headers={"WWW-Authenticate": "Bearer"},
     )
-
     payload = decode_access_token(token)
     if payload is None:
         raise credentials_exception
@@ -32,14 +32,25 @@ def get_current_user(
     user = repo.get_by_username(username)
     if user is None:
         raise credentials_exception
-
     return user
 
 
-def require_admin(current_user: Employee = Depends(get_current_user)) -> Employee:
-    if current_user.is_admin != "Y":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Acesso restrito a administradores",
-        )
-    return current_user
+def require_role(*allowed: UserType):
+    """
+    Factory de dependency: em vez de escrever uma função 'require_admin',
+    'require_super_admin' etc. na mão pra cada combinação, geramos a
+    dependency dinamicamente. Uso: Depends(require_role(UserType.SUPER_ADMIN))
+    """
+    def dependency(current_user: Employee = Depends(get_current_user)) -> Employee:
+        if current_user.user_type not in allowed:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Você não tem permissão para executar esta ação",
+            )
+        return current_user
+    return dependency
+
+
+# Atalhos legíveis pras rotas
+require_super_admin = require_role(UserType.SUPER_ADMIN)
+require_admin_or_above = require_role(UserType.SUPER_ADMIN, UserType.ADMIN)

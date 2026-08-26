@@ -45,10 +45,14 @@
       <input id="password" type="password" formControlName="password" />
     </div>
 
-    <label class="checkbox-label">
-      <input type="checkbox" formControlName="is_admin" />
-      Administrador
-    </label>
+    <div class="field">
+      <label for="user_type">Papel</label>
+      <select id="user_type" formControlName="user_type">
+        <option value="super_admin" *ngIf="canAssignSuperAdmin">Super Administrador</option>
+        <option value="admin">Administrador</option>
+        <option value="normal">Funcionário</option>
+      </select>
+    </div>
 
     <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
 

@@ -5,7 +5,9 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ShellComponent } from './layout/shell/shell.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
-import { adminGuard } from './core/guards/admin.guard';
+import { superAdminGuard } from './core/guards/super-admin.guard';
+import { adminOrAboveGuard } from './core/guards/admin-or-above.guard';
+import { managementLandingGuard } from './core/guards/management-landing.guard';
 import { AccessDeniedComponent } from './pages/access-denied/access-denied.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 
@@ -35,17 +37,26 @@ export const routes: Routes = [
       {
         path: 'management',
         component: ManagementComponent,
-        canActivate: [adminGuard],
+        canActivate: [adminOrAboveGuard],
         children: [
-          { path: '', redirectTo: 'departments', pathMatch: 'full' },
+          // O guard decide o destino: super_admin -> occurrences, admin -> occurrences/list.
+          // Precisa de um component aqui só porque o Angular exige um para a rota existir;
+          // ele nunca chega a renderizar, pois o guard sempre redireciona antes.
+          { path: '', pathMatch: 'full', component: OccurrencesListComponent, canActivate: [managementLandingGuard] },
 
-          { path: 'departments', component: DepartmentsComponent },
-          { path: 'employees', component: EmployeesComponent },
-          { path: 'categories', component: CategoriesComponent },
+          // Só super_admin
+          { path: 'departments', component: DepartmentsComponent, canActivate: [superAdminGuard] },
+          { path: 'employees', component: EmployeesComponent, canActivate: [superAdminGuard] },
+          { path: 'categories', component: CategoriesComponent, canActivate: [superAdminGuard] },
 
-          { path: 'occurrences', component: OccurrencesComponent },
+          // Tile-page (Add/List) só faz sentido pra quem pode Add -> só super_admin
+          { path: 'occurrences', component: OccurrencesComponent, canActivate: [superAdminGuard] },
+
+          // super_admin e admin podem ver a lista de ocorrências
           { path: 'occurrences/list', component: OccurrencesListComponent },
-          { path: 'occurrences/add', component: OccurrenceAddComponent },
+
+          // Criar ocorrência continua só super_admin
+          { path: 'occurrences/add', component: OccurrenceAddComponent, canActivate: [superAdminGuard] }
         ],
       },
     ],

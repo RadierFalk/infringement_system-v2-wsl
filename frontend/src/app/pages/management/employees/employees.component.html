@@ -25,7 +25,7 @@
           <th>Nome</th>
           <th>Usuário</th>
           <th>Departamento</th>
-          <th>Admin</th>
+          <th>Papel</th>
           <th></th>
         </tr>
       </thead>
@@ -34,7 +34,7 @@
           <td>{{ emp.name }}</td>
           <td>{{ emp.username }}</td>
           <td>{{ emp.department?.name || '—' }}</td>
-          <td>{{ emp.is_admin ? 'Sim' : 'Não' }}</td>
+          <td>{{ userTypeLabel(emp.user_type) }}</td>
           <td class="actions-cell">
             <button type="button" class="btn-link" (click)="openEditModal(emp)">Editar</button>
             <button type="button" class="btn-link btn-link-danger" (click)="requestDelete(emp)">Excluir</button>

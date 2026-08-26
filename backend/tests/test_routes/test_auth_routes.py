@@ -32,4 +32,4 @@ def test_me_with_valid_token(client, admin_headers):
     assert response.status_code == 200
     data = response.json()
     assert data["username"] == "admin.teste"
-    assert data["is_admin"] is True
+    assert data["user_type"] == "super_admin"

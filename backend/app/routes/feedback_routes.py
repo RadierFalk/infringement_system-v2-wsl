@@ -5,7 +5,7 @@ from typing import List
 from app.database import get_db
 from app.repositories import FeedbackRepository, FeedbackReviewRepository
 from app.schemas import FeedbackCreate, FeedbackRead, FeedbackReviewCreate, FeedbackReviewRead
-from app.dependencies.auth import get_current_user, require_admin
+from app.dependencies.auth import get_current_user, require_super_admin
 from app.models import Employee
 from app.repositories import OccurrenceRepository
 from app.models.occurrence import StatusEnum
@@ -66,7 +66,7 @@ def review_feedback(
     feedback_id: int,
     payload: FeedbackReviewCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     feedback_repo = FeedbackRepository(db)
     review_repo = FeedbackReviewRepository(db)

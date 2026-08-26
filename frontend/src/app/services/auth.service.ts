@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { TokenStorageService } from '../core/services/token-storage.service';
-import { LoginRequest, LoginResponse, UserInfo } from '../models/auth.interface';
+import { LoginRequest, LoginResponse, UserInfo, UserType } from '../models/auth.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -37,7 +37,24 @@ export class AuthService {
     return this.tokenStorage.getUserInfo<UserInfo>();
   }
 
-  isAdmin(): boolean {
-    return this.getUserInfo()?.is_admin ?? false;
+  getUserType(): UserType | null {
+    return this.getUserInfo()?.user_type ?? null;
+  }
+
+   // GA e Monitoria: cria/edita/apaga ocorrências, departamentos, categorias, funcionários
+  isSuperAdmin(): boolean {
+    return this.getUserType() === 'super_admin'
+  }
+
+  // RH, Jurídico, Presidentes: visualiza tudo + sugere modificações em qualquer departamento
+  // (super_admin também "conta como" admin_or_above, por isso o OR aqui)
+  isAdminOrAbove(): boolean {
+    const type = this.getUserType();
+    return type === 'super_admin' || type === 'admin';
+  }
+
+  // Gestores/Diretores: só o próprio departamento
+  isNormal(): boolean {
+    return this.getUserType() === 'normal';
   }
 }

@@ -1,0 +1,160 @@
+[1mdiff --git a/backend/app/routes/department_routes.py b/backend/app/routes/department_routes.py[m
+[1mindex 44b910f..5cb327f 100644[m
+[1m--- a/backend/app/routes/department_routes.py[m
+[1m+++ b/backend/app/routes/department_routes.py[m
+[36m@@ -6,7 +6,7 @@[m [mfrom typing import List[m
+ from app.database import get_db[m
+ from app.repositories import DepartmentRepository[m
+ from app.schemas import DepartmentCreate, DepartmentRead, DepartmentWithCount[m
+[31m-from app.dependencies.auth import get_current_user, require_admin[m
+[32m+[m[32mfrom app.dependencies.auth import get_current_user, require_super_admin[m
+ from app.models import Employee[m
+ [m
+ router = APIRouter(prefix="/departments", tags=["departments"])[m
+[36m@@ -38,7 +38,7 @@[m [mdef get_department([m
+ def create_department([m
+     payload: DepartmentCreate,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = DepartmentRepository(db)[m
+     if repo.get_by_name(payload.name):[m
+[36m@@ -51,7 +51,7 @@[m [mdef update_department([m
+     id: int,[m
+     payload: DepartmentCreate,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = DepartmentRepository(db)[m
+     updated = repo.update(id, payload.model_dump())[m
+[36m@@ -64,7 +64,7 @@[m [mdef update_department([m
+ def delete_department([m
+     id: int,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = DepartmentRepository(db)[m
+     try:[m
+[1mdiff --git a/backend/app/routes/employee_routes.py b/backend/app/routes/employee_routes.py[m
+[1mindex de26d36..e9e6205 100644[m
+[1m--- a/backend/app/routes/employee_routes.py[m
+[1m+++ b/backend/app/routes/employee_routes.py[m
+[36m@@ -6,7 +6,7 @@[m [mfrom typing import Optional[m
+ from app.database import get_db[m
+ from app.repositories import EmployeeRepository[m
+ from app.schemas import EmployeeCreate, EmployeeRead, PaginatedResponse[m
+[31m-from app.dependencies.auth import get_current_user, require_admin[m
+[32m+[m[32mfrom app.dependencies.auth import get_current_user, require_super_admin[m
+ from app.core.security import hash_password[m
+ from app.models import Employee[m
+ [m
+[36m@@ -64,7 +64,7 @@[m [mdef get_employee([m
+ def create_employee([m
+     payload: EmployeeCreate,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = EmployeeRepository(db)[m
+     if repo.get_by_username(payload.username):[m
+[36m@@ -91,7 +91,7 @@[m [mdef update_employee([m
+     id: int,[m
+     payload: EmployeeCreate,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = EmployeeRepository(db)[m
+ [m
+[36m@@ -113,7 +113,7 @@[m [mdef update_employee([m
+ def delete_employee([m
+     id: int,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = EmployeeRepository(db)[m
+     if not repo.delete(id):[m
+[1mdiff --git a/backend/app/routes/feedback_routes.py b/backend/app/routes/feedback_routes.py[m
+[1mindex 78bd72c..aef86c1 100644[m
+[1m--- a/backend/app/routes/feedback_routes.py[m
+[1m+++ b/backend/app/routes/feedback_routes.py[m
+[36m@@ -5,7 +5,7 @@[m [mfrom typing import List[m
+ from app.database import get_db[m
+ from app.repositories import FeedbackRepository, FeedbackReviewRepository[m
+ from app.schemas import FeedbackCreate, FeedbackRead, FeedbackReviewCreate, FeedbackReviewRead[m
+[31m-from app.dependencies.auth import get_current_user, require_admin[m
+[32m+[m[32mfrom app.dependencies.auth import get_current_user, require_super_admin[m
+ from app.models import Employee[m
+ from app.repositories import OccurrenceRepository[m
+ from app.models.occurrence import StatusEnum[m
+[36m@@ -66,7 +66,7 @@[m [mdef review_feedback([m
+     feedback_id: int,[m
+     payload: FeedbackReviewCreate,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     feedback_repo = FeedbackRepository(db)[m
+     review_repo = FeedbackReviewRepository(db)[m
+[1mdiff --git a/backend/app/routes/occurrence_category_routes.py b/backend/app/routes/occurrence_category_routes.py[m
+[1mindex 6ded41a..6e020fe 100644[m
+[1m--- a/backend/app/routes/occurrence_category_routes.py[m
+[1m+++ b/backend/app/routes/occurrence_category_routes.py[m
+[36m@@ -10,7 +10,7 @@[m [mfrom app.schemas import ([m
+     SendingRuleCreate,[m
+     SendingRuleRead,[m
+ )[m
+[31m-from app.dependencies.auth import get_current_user, require_admin[m
+[32m+[m[32mfrom app.dependencies.auth import get_current_user, require_super_admin[m
+ from app.models import Employee, OccurrenceCategorySendingRule[m
+ [m
+ router = APIRouter(prefix="/occurrence-categories", tags=["occurrence-categories"])[m
+[36m@@ -42,7 +42,7 @@[m [mdef get_category([m
+ def create_category([m
+     payload: OccurrenceCategoryCreate,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = OccurrenceCategoryRepository(db)[m
+     return repo.create(payload.model_dump())[m
+[36m@@ -53,7 +53,7 @@[m [mdef update_category([m
+     id: int,[m
+     payload: OccurrenceCategoryCreate,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = OccurrenceCategoryRepository(db)[m
+     updated = repo.update(id, payload.model_dump())[m
+[36m@@ -66,7 +66,7 @@[m [mdef update_category([m
+ def delete_category([m
+     id: int,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = OccurrenceCategoryRepository(db)[m
+     if not repo.delete(id):[m
+[36m@@ -78,7 +78,7 @@[m [mdef add_sending_rule([m
+     category_id: int,[m
+     payload: SendingRuleCreate,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     repo = OccurrenceCategoryRepository(db)[m
+     category = repo.get(category_id)[m
+[36m@@ -100,7 +100,7 @@[m [mdef delete_sending_rule([m
+     category_id: int,[m
+     rule_id: int,[m
+     db: Session = Depends(get_db),[m
+[31m-    current_user: Employee = Depends(require_admin),[m
+[32m+[m[32m    current_user: Employee = Depends(require_super_admin),[m
+ ):[m
+     """[m
+     Remove uma regra de envio específica. Sem esse endpoint, o único jeito[m

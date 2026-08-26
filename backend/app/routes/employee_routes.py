@@ -6,7 +6,7 @@ from typing import Optional
 from app.database import get_db
 from app.repositories import EmployeeRepository
 from app.schemas import EmployeeCreate, EmployeeRead, PaginatedResponse
-from app.dependencies.auth import get_current_user, require_admin
+from app.dependencies.auth import get_current_user, require_super_admin
 from app.core.security import hash_password
 from app.models import Employee
 
@@ -24,7 +24,7 @@ def _to_employee_read(emp: Employee) -> dict:
         "company": emp.company,
         "role": emp.role,
         "department_id": emp.department_id,
-        "is_admin": emp.is_admin == "Y",
+        "user_type": emp.user_type,
         "department": emp.department,
     }
 
@@ -64,7 +64,7 @@ def get_employee(
 def create_employee(
     payload: EmployeeCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = EmployeeRepository(db)
     if repo.get_by_username(payload.username):
@@ -72,10 +72,9 @@ def create_employee(
 
     data = payload.model_dump()
     plain_password = data.pop("password", None)
-    is_admin = data.pop("is_admin", False)
-
     data["hashed_password"] = hash_password(plain_password) if plain_password else None
-    data["is_admin"] = "Y" if is_admin else "N"
+    # user_type já vem certo dentro de `data`, validado pelo schema EmployeeCreate —
+    # não precisa mais popar/converter nada aqui, diferente do is_admin antigo.
 
     try:
         emp = repo.create(data)
@@ -91,17 +90,17 @@ def update_employee(
     id: int,
     payload: EmployeeCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = EmployeeRepository(db)
 
     data = payload.model_dump()
     plain_password = data.pop("password", None)
-    is_admin = data.pop("is_admin", False)
 
     if plain_password:
         data["hashed_password"] = hash_password(plain_password)
-    data["is_admin"] = "Y" if is_admin else "N"
+    else:
+        data.pop("hashed_password", None) # nâo sobrescreve a senha se o campo veio vazio
 
     updated = repo.update(id, data)
     if not updated:
@@ -113,7 +112,7 @@ def update_employee(
 def delete_employee(
     id: int,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = EmployeeRepository(db)
     if not repo.delete(id):

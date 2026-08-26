@@ -22,11 +22,22 @@ export class SidebarComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  // Getter em vez de propriedade fixa: reavalia isAdmin() toda vez que
-  // o Angular roda detecção de mudanças, então se o usuário mudar
-  // (ex: outro login na mesma sessão de navegador) o menu se atualiza sozinho.
-  get isAdmin(): boolean {
-    return this.authService.isAdmin();
+  // "Gestão" agora aparece pra super_admin E admin (regra que a gente definiu:
+  // admin entra na área de management, mesmo só podendo ver/sugerir).
+  get canSeeManagement(): boolean {
+    return this.authService.isAdminOrAbove();
+  }
+
+  // Rótulo amigável em português pro papel do usuário — o valor guardado
+  // internamente continua sendo 'super_admin'/'admin'/'normal', só a
+  // exibição na tela é traduzida aqui.
+  get userTypeLabel(): string {
+    const labels: Record<string, string> = {
+      super_admin: 'Super Adiministrador',
+      admin: 'Administrador',
+      normal: 'Funcionario',
+    };
+    return labels[this.authService.getUserType() ?? ''] ?? '';
   }
 
   logout(): void {

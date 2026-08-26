@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from app.config import Settings
 from app.models import Base
+from app.models.employee import UserType;
 from app.database import get_db
 from app.main import app
 from app.core.security import hash_password
@@ -85,7 +86,7 @@ def admin_user(db_session, department):
         email="admin.teste@teste.com",
         department_id=department.id,
         hashed_password=hash_password("admin123"),
-        is_admin="Y",
+        user_type=UserType.SUPER_ADMIN,
     )
     db_session.add(user)
     db_session.commit()
@@ -102,7 +103,7 @@ def common_user(db_session, department):
         email="func.teste@teste.com",
         department_id=department.id,
         hashed_password=hash_password("senha123"),
-        is_admin="N",
+        user_type=UserType.NORMAL,
     )
     db_session.add(user)
     db_session.commit()

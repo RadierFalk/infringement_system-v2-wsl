@@ -1,6 +1,6 @@
 def test_validation_error_has_consistent_format(client, admin_headers):
     response = client.post(
-        "/departments/",
+        "/api/departments/",
         headers=admin_headers,
         json={},  # falta o campo obrigatório "name"
     )
