@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MonthlyByCategoryStats } from '../../../models/occurrence-stats.interface';
 
-const MONTH_LABELS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const SERIES_SLOTS = 8;
 
 interface ChartSeries {
@@ -134,9 +134,18 @@ export class OccurrencesBarChartComponent implements OnChanges {
     });
 
     const maxValue = Math.max(...seriesCountsByMonth.flat(), 1);
-    const niceMax = this.niceMax(maxValue);
-    const stepCount = 4;
-    const step = niceMax / stepCount;
+
+    // Eixo Y: primeiro decide um "step" (intervalo entre marcações) que faça
+    // sentido pra contagem — nunca fracionário, sempre >= 1 — e só depois
+    // descobre quantas marcações cabem até o topo. Fazer o contrário (fixar
+    // sempre 4 divisões e calcular o step a partir disso) gera passos como
+    // 0.25 quando o máximo é 1, e o arredondamento pra exibir vira 0, 0, 1, 1 —
+    // marcações repetidas.
+    const desiredTicks = 4;
+    const rawStep = maxValue / desiredTicks;
+    const step = Math.max(1, this.niceStep(rawStep));
+    const niceMax = Math.ceil(maxValue / step) * step;
+    const stepCount = niceMax / step;
 
     const plotWidth = this.viewBoxWidth - this.plotLeft - this.plotRight;
     const plotHeight = this.viewBoxHeight - this.plotTop - this.plotBottom;
@@ -176,6 +185,23 @@ export class OccurrencesBarChartComponent implements OnChanges {
         });
       });
     });
+  }
+
+  // Arredonda um step "cru" (max / nº de divisões desejado) pro próximo
+  // valor "bonito" (1, 2, 5, 10, 20, 50...) na mesma escala de grandeza —
+  // mesma ideia do niceMax abaixo, mas aplicada ao intervalo entre
+  // marcações em vez de ao topo do eixo.
+  private niceStep(rawStep: number): number {
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const normalized = rawStep / magnitude;
+
+    let niceNormalized: number;
+    if (normalized <= 1) niceNormalized = 1;
+    else if (normalized <= 2) niceNormalized = 2;
+    else if (normalized <= 5) niceNormalized = 5;
+    else niceNormalized = 10;
+
+    return niceNormalized * magnitude;
   }
 
   private niceMax(value: number): number {

@@ -148,6 +148,7 @@ def get_monthly_by_category(
     }
 
     category_repo = OccurrenceCategoryRepository(db)
+
     categories = sorted(
         category_repo.get_all(),
         key=lambda c: c.name,

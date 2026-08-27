@@ -104,4 +104,4 @@ class OccurrenceRepository(BaseRepository):
             query = query.join(Employee).filter(Employee.department_id == department_id)
 
         query = query.group_by("month", Occurrence.category_id)
-        return [(int(row.month), row.category_id, row.total) for row in query.all]
+        return [(int(row.month), row.category_id, row.total) for row in query.all()]
