@@ -15,18 +15,30 @@ export class SidebarComponent {
   // Exposto como propriedade pública para o template poder usar
   // [routerLink]="routes.DASHBOARD" em vez de string literal.
   routes = APP_ROUTES;
-  
+
   get userInfo() {
     return this.authService.getUserInfo();
   }
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  // Getter em vez de propriedade fixa: reavalia isAdmin() toda vez que
-  // o Angular roda detecção de mudanças, então se o usuário mudar
-  // (ex: outro login na mesma sessão de navegador) o menu se atualiza sozinho.
-  get isAdmin(): boolean {
-    return this.authService.isAdmin();
+  // "Gestão" agora aparece para super_admin e admin.
+  get canSeeManagement(): boolean {
+    return this.authService.isAdminOrAbove();
+  }
+
+  // Rótulo amigável em português para o papel do usuário.
+  get userTypeLabel(): string {
+    const labels: Record<string, string> = {
+      super_admin: 'Super Administrador',
+      admin: 'Administrador',
+      normal: 'Funcionário',
+    };
+
+    return labels[this.authService.getUserType() ?? ''] ?? '';
   }
 
   logout(): void {

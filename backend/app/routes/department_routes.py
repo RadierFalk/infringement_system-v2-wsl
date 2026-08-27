@@ -6,7 +6,7 @@ from typing import List
 from app.database import get_db
 from app.repositories import DepartmentRepository
 from app.schemas import DepartmentCreate, DepartmentRead, DepartmentWithCount
-from app.dependencies.auth import get_current_user, require_admin
+from app.dependencies.auth import get_current_user, require_super_admin
 from app.models import Employee
 
 router = APIRouter(prefix="/departments", tags=["departments"])
@@ -29,8 +29,13 @@ def get_department(
 ):
     repo = DepartmentRepository(db)
     dept = repo.get(id)
+
     if not dept:
-        raise HTTPException(status_code=404, detail="Departamento não encontrado")
+        raise HTTPException(
+            status_code=404,
+            detail="Departamento não encontrado",
+        )
+
     return dept
 
 
@@ -38,11 +43,16 @@ def get_department(
 def create_department(
     payload: DepartmentCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = DepartmentRepository(db)
+
     if repo.get_by_name(payload.name):
-        raise HTTPException(status_code=409, detail="Já existe um departamento com esse nome")
+        raise HTTPException(
+            status_code=409,
+            detail="Já existe um departamento com esse nome",
+        )
+
     return repo.create(payload.model_dump())
 
 
@@ -51,12 +61,17 @@ def update_department(
     id: int,
     payload: DepartmentCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = DepartmentRepository(db)
     updated = repo.update(id, payload.model_dump())
+
     if not updated:
-        raise HTTPException(status_code=404, detail="Departamento não encontrado")
+        raise HTTPException(
+            status_code=404,
+            detail="Departamento não encontrado",
+        )
+
     return updated
 
 
@@ -64,16 +79,24 @@ def update_department(
 def delete_department(
     id: int,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = DepartmentRepository(db)
+
     try:
         deleted = repo.delete(id)
     except IntegrityError:
         db.rollback()
         raise HTTPException(
             status_code=409,
-            detail="Não é possível excluir: há funcionários vinculados a este departamento",
+            detail=(
+                "Não é possível excluir: há funcionários vinculados "
+                "a este departamento"
+            ),
         )
+
     if not deleted:
-        raise HTTPException(status_code=404, detail="Departamento não encontrado")
+        raise HTTPException(
+            status_code=404,
+            detail="Departamento não encontrado",
+        )

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
 import { ApiService } from '../core/services/api.service';
 import { Occurrence } from '../models/occurrence.interface';
 import { PaginatedResponse } from '../models/paginated-response.interface';
@@ -20,7 +19,7 @@ export interface OccurrenceCreate {
   date: string;
   employee_id: number;
   file_id?: number;
-  category_id: number;
+  category_id?: number;
 }
 
 @Injectable({
@@ -41,6 +40,7 @@ export class OccurrencesService {
   create(payload: OccurrenceCreate): Observable<Occurrence> {
     return this.api.post<Occurrence>('/occurrences/', payload);
   }
+
   delete(id: number): Observable<void> {
     return this.api.delete<void>(`/occurrences/${id}`);
   }

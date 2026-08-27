@@ -27,7 +27,7 @@ class OccurrenceBase(BaseModel):
 
 
 class OccurrenceCreate(OccurrenceBase):
-    category_id: int
+    pass
 
 
 class OccurrenceRead(OccurrenceBase):

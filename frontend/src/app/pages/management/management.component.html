@@ -1,10 +1,14 @@
 <div class="management-page">
   <nav class="tabs">
-    <a routerLink="occurrences" routerLinkActive="active" class="tab">Occurrences</a>
-    <a routerLink="departments" routerLinkActive="active" class="tab">Departamentos</a>
-    <a routerLink="employees" routerLinkActive="active" class="tab">Funcionários</a>
-    <a routerLink="categories" routerLinkActive="active" class="tab">Categorias</a>
-    <!-- 'Ocorrências' entra na Etapa 8 -->
+
+    <a [routerLink]="occurrencesLink" routerLinkActive="active" class="tab">Ocorrências</a>
+
+    <ng-container *ngIf="authService.isSuperAdmin()">
+      <a routerLink="departments" routerLinkActive="active" class="tab">Departamentos</a>
+      <a routerLink="employees" routerLinkActive="active" class="tab">Funcionários</a>
+      <a routerLink="categories" routerLinkActive="active" class="tab">Categorias</a>
+    </ng-container>
+
   </nav>
 
   <div class="tab-content">

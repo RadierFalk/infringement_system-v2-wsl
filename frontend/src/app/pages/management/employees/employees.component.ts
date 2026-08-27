@@ -13,31 +13,31 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 @Component({
   selector: 'app-employees',
   standalone: true,
-  imports: [CommonModule, FormsModule, EmployeeFormModalComponent, ConfirmDialogComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    EmployeeFormModalComponent,
+    ConfirmDialogComponent
+  ],
   templateUrl: './employees.component.html',
   styleUrls: ['./employees.component.scss'],
 })
 export class EmployeesComponent implements OnInit {
   employees: Employee[] = [];
   departments: Department[] = [];
-
   isLoading = true;
   errorMessage = '';
-
   searchTerm = '';
   currentPage = 1;
   pageSize = 10;
   total = 0;
-
   showFormModal = false;
   employeeBeingEdited: Employee | null = null;
-
   employeePendingDelete: Employee | null = null;
   deleteErrorMessage = '';
 
-  // Subject que recebe cada tecla digitada na busca. Ele existe pra
-  // podermos aplicar debounceTime — sem isso, cada letra digitada
-  // dispararia uma requisição HTTP nova, sobrecarregando a API.
+  // Subject que recebe cada tecla digitada na busca.
+  // Usamos debounceTime para evitar uma requisição a cada tecla.
   private searchSubject = new Subject<string>();
 
   constructor(
@@ -51,11 +51,11 @@ export class EmployeesComponent implements OnInit {
 
     this.searchSubject
       .pipe(
-        debounceTime(300), // espera 300ms de silêncio antes de buscar
-        distinctUntilChanged() // ignora se o texto não mudou de fato
+        debounceTime(300),
+        distinctUntilChanged()
       )
       .subscribe(() => {
-        this.currentPage = 1; // toda nova busca reinicia a paginação
+        this.currentPage = 1;
         this.loadEmployees();
       });
   }
@@ -65,8 +65,8 @@ export class EmployeesComponent implements OnInit {
   }
 
   private loadDepartments(): void {
-    // Usado só pra popular o <select> do formulário e mostrar o nome
-    // do departamento na tabela — não precisa de paginação nem loading próprio.
+    // Usado para popular o select do formulário e mostrar
+    // o nome do departamento na tabela.
     this.departmentsService.getAll().subscribe({
       next: (data) => (this.departments = data),
     });
@@ -101,6 +101,7 @@ export class EmployeesComponent implements OnInit {
 
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
+
     this.currentPage = page;
     this.loadEmployees();
   }
@@ -146,5 +147,15 @@ export class EmployeesComponent implements OnInit {
         this.deleteErrorMessage = 'Não foi possível excluir. Tente novamente.';
       },
     });
+  }
+
+  userTypeLabel(userType: string): string {
+    const labels: Record<string, string> = {
+      super_admin: 'Super Administrador',
+      admin: 'Administrador',
+      normal: 'Funcionário',
+    };
+
+    return labels[userType] ?? userType;
   }
 }

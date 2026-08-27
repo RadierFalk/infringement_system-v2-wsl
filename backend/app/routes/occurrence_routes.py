@@ -5,8 +5,9 @@ from typing import Optional
 from app.database import get_db
 from app.repositories import OccurrenceRepository
 from app.schemas import OccurrenceCreate, OccurrenceRead, PaginatedResponse
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_current_user, require_super_admin
 from app.models import Employee
+from app.models.employee import UserType
 from app.services.email_service import resolve_recipients, send_occurrence_email
 from app.models.occurrence import StatusEnum
 
@@ -25,24 +26,16 @@ def list_occurrences(
     page: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
 ):
-    # Regra de segurança: funcionário comum NUNCA pode ver ocorrências de
-    # outro departamento, mesmo que tente manipular o parâmetro department_id
-    # na requisição. O valor vindo do cliente só é respeitado se quem está
-    # pedindo for admin — para não-admin, sobrescrevemos com o departamento
-    # do próprio usuário autenticado (dado que vem do token, não do cliente).
+    # Funcionário 'normal' só pode visualizar ocorrências
+    # do próprio departamento.
+    #
+    # Admin e Super Admin podem consultar outros departamentos.
     effective_department_id = department_id
-    if current_user.is_admin != "Y":
+
+    if current_user.user_type == UserType.NORMAL:
         effective_department_id = current_user.department_id
 
     repo = OccurrenceRepository(db)
-    # Regra de segurança: funcionário comum NUNCA pode ver ocorrências de
-    # outro departamento, mesmo que tente manipular o parâmetro department_id
-    # na requisição. O valor vindo do cliente só é respeitado se quem está
-    # pedindo for admin — para não-admin, sobrescrevemos com o departamento
-    # do próprio usuário autenticado (dado que vem do token, não do cliente).
-    effective_department_id = department_id
-    if current_user.is_admin != "Y":
-        effective_department_id = current_user.department_id
 
     items, total = repo.get_filtered(
         filter_text=filter_text,
@@ -52,7 +45,13 @@ def list_occurrences(
         page=page,
         size=size,
     )
-    return PaginatedResponse(items=items, total=total, page=page, size=size)
+
+    return PaginatedResponse(
+        items=items,
+        total=total,
+        page=page,
+        size=size,
+    )
 
 
 @router.get("/employee/{employee_id}", response_model=list[OccurrenceRead])
@@ -73,8 +72,13 @@ def get_occurrence(
 ):
     repo = OccurrenceRepository(db)
     occurrence = repo.get(id)
+
     if not occurrence:
-        raise HTTPException(status_code=404, detail="Ocorrência não encontrada")
+        raise HTTPException(
+            status_code=404,
+            detail="Ocorrência não encontrada",
+        )
+
     return occurrence
 
 
@@ -82,12 +86,15 @@ def get_occurrence(
 def create_occurrence(
     payload: OccurrenceCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(get_current_user),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = OccurrenceRepository(db)
+
     data = payload.model_dump()
     created = repo.create(data)
+
     return repo.get(created.id)
+
 
 @router.post("/{id}/send-notification")
 def send_notification(
@@ -97,11 +104,19 @@ def send_notification(
 ):
     repo = OccurrenceRepository(db)
     occurrence = repo.get(id)
+
     if not occurrence:
-        raise HTTPException(status_code=404, detail="Ocorrência não encontrada")
+        raise HTTPException(
+            status_code=404,
+            detail="Ocorrência não encontrada",
+        )
 
     to_emails, cc_emails = resolve_recipients(db, occurrence)
-    sent = send_occurrence_email(occurrence, to_emails, cc_emails)
+    sent = send_occurrence_email(
+        occurrence,
+        to_emails,
+        cc_emails,
+    )
 
     if sent:
         repo.update_status(id, StatusEnum.SENT)
@@ -118,8 +133,12 @@ def send_notification(
 def delete_occurrence(
     id: int,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(get_current_user),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = OccurrenceRepository(db)
+
     if not repo.delete(id):
-        raise HTTPException(status_code=404, detail="Ocorrência não encontrada")
+        raise HTTPException(
+            status_code=404,
+            detail="Ocorrência não encontrada",
+        )

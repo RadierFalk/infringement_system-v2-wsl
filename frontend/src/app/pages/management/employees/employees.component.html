@@ -25,19 +25,34 @@
           <th>Nome</th>
           <th>Usuário</th>
           <th>Departamento</th>
-          <th>Admin</th>
+          <th>Papel</th>
           <th></th>
         </tr>
       </thead>
+
       <tbody>
         <tr *ngFor="let emp of employees">
           <td>{{ emp.name }}</td>
           <td>{{ emp.username }}</td>
           <td>{{ emp.department?.name || '—' }}</td>
-          <td>{{ emp.is_admin ? 'Sim' : 'Não' }}</td>
+          <td>{{ userTypeLabel(emp.user_type) }}</td>
+
           <td class="actions-cell">
-            <button type="button" class="btn-link" (click)="openEditModal(emp)">Editar</button>
-            <button type="button" class="btn-link btn-link-danger" (click)="requestDelete(emp)">Excluir</button>
+            <button
+              type="button"
+              class="btn-link"
+              (click)="openEditModal(emp)"
+            >
+              Editar
+            </button>
+
+            <button
+              type="button"
+              class="btn-link btn-link-danger"
+              (click)="requestDelete(emp)"
+            >
+              Excluir
+            </button>
           </td>
         </tr>
       </tbody>
@@ -49,11 +64,21 @@
   </p>
 
   <div class="pagination" *ngIf="!isLoading && total > 0">
-    <button type="button" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+    <button
+      type="button"
+      [disabled]="currentPage === 1"
+      (click)="goToPage(currentPage - 1)"
+    >
       ← Anterior
     </button>
+
     <span>Página {{ currentPage }} de {{ totalPages }}</span>
-    <button type="button" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+
+    <button
+      type="button"
+      [disabled]="currentPage === totalPages"
+      (click)="goToPage(currentPage + 1)"
+    >
       Próxima →
     </button>
   </div>

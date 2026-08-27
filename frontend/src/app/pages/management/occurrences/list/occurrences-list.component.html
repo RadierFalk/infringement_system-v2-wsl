@@ -2,17 +2,17 @@
 
   <header class="page-header">
     <div>
-      <h1>Occurrences</h1>
-      <p>View and manage occurrences.</p>
+      <h1>Ocorrências</h1>
+      <p>Visualizar e gerenciar ocorrências.</p>
     </div>
 
     <div class="header-actions">
       <a class="back-button" routerLink="/management/occurrences">
-        ← Back
+        ← Voltar
       </a>
 
       <a class="add-button" routerLink="/management/occurrences/add">
-        + Add Occurrence
+        + Adicionar ocorrência
       </a>
     </div>
   </header>
@@ -38,12 +38,12 @@
       (ngModelChange)="onFilterChange()"
     >
       <option [ngValue]="null">
-        All categories
+        Todas as categorias
       </option>
 
       <option
-      *ngFor="let category of categories"
-      [ngValue]="category.id"
+        *ngFor="let category of categories"
+        [ngValue]="category.id"
       >
         {{ category.name }}
       </option>
@@ -54,7 +54,7 @@
   <section class="content-card">
 
     <div *ngIf="loading" class="state-message">
-      Loading occurrences...
+      Carregando ocorrências...
     </div>
 
     <div *ngIf="error && !loading" class="state-message error">
@@ -65,7 +65,7 @@
       *ngIf="!loading && !error && occurrences.length === 0"
       class="state-message"
     >
-      No occurrences found.
+      Nenhuma ocorrência encontrada.
     </div>
 
     <div
@@ -76,12 +76,12 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Title</th>
-            <th>Employee</th>
-            <th>Category</th>
+            <th>Título</th>
+            <th>Funcionário</th>
+            <th>Categoria</th>
             <th>Status</th>
-            <th>Date</th>
-            <th>Actions</th>
+            <th>Data</th>
+            <th>Ações</th>
           </tr>
         </thead>
 
@@ -120,7 +120,7 @@
                 class="btn-link btn-link-danger"
                 (click)="requestDelete(occurrence)"
               >
-              Delete
+                Excluir
               </button>
             </td>
           </tr>
@@ -137,11 +137,11 @@
         (click)="previousPage()"
         [disabled]="page === 1"
       >
-        Previous
+        Anterior
       </button>
 
       <span>
-        Page {{ page }}
+        Página {{ page }}
       </span>
 
       <button
@@ -149,17 +149,18 @@
         (click)="nextPage()"
         [disabled]="page * size >= total"
       >
-        Next
+        Próxima
       </button>
     </div>
 
     <app-confirm-dialog
       *ngIf="occurrencePendingDelete"
-      title="Delete occurrence"
-      [message]="'Are you sure you want to delete the occurrence \'' + occurrencePendingDelete.title + '\'?'"
+      title="Excluir ocorrência"
+      [message]="'Tem certeza que deseja excluir a ocorrência \'' + occurrencePendingDelete.title + '\'?'"
       (confirmed)="confirmDelete()"
       (cancelled)="cancelDelete()"
-      ></app-confirm-dialog>
+    ></app-confirm-dialog>
+
   </section>
 
 </div>

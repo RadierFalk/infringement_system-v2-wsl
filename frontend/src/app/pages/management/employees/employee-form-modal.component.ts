@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { EmployeesService } from '../../../services/employees.service';
-import { Employee } from '../../../models/employee.interface';
+import { Employee, UserType } from '../../../models/employee.interface';
 import { Department } from '../../../models/department.interface';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-employee-form-modal',
@@ -28,7 +29,11 @@ export class EmployeeFormModalComponent implements OnChanges {
   isSaving = false;
   errorMessage = '';
 
-  constructor(private fb: FormBuilder, private employeesService: EmployeesService) {
+  constructor(
+    private fb: FormBuilder,
+    private employeesService: EmployeesService,
+    private authService: AuthService
+  ) {
     this.form = this.fb.group({
       name: ['', Validators.required],
       username: ['', Validators.required],
@@ -37,17 +42,22 @@ export class EmployeeFormModalComponent implements OnChanges {
       company: [''],
       role: [''],
       department_id: [null, Validators.required],
-      password: [''], // required é adicionado/removido dinamicamente em ngOnChanges
-      is_admin: [false],
+      password: [''],
+      user_type: ['normal' as UserType, Validators.required],
     });
+  }
+
+  // Só quem já é super_admin pode PROMOVER outra pessoa a super_admin.
+  get canAssignSuperAdmin(): boolean {
+    return this.authService.isSuperAdmin();
   }
 
   ngOnChanges(): void {
     const passwordControl = this.form.get('password')!;
 
     if (this.employee) {
-      // Modo edição: preenche o form e TORNA a senha opcional
-      // (deixar em branco = manter a senha atual, regra do backend).
+      // Modo edição: preenche o form e TORNA a senha opcional.
+      // Deixar em branco = manter a senha atual, regra do backend.
       this.form.patchValue({
         name: this.employee.name,
         username: this.employee.username,
@@ -57,17 +67,20 @@ export class EmployeeFormModalComponent implements OnChanges {
         role: this.employee.role ?? '',
         department_id: this.employee.department_id,
         password: '',
-        is_admin: this.employee.is_admin,
+        user_type: this.employee.user_type,
       });
+
       passwordControl.clearValidators();
     } else {
       // Modo criação: form limpo e senha OBRIGATÓRIA.
-      this.form.reset({ is_admin: false });
+      this.form.reset({
+        user_type: 'normal',
+      });
+
       passwordControl.setValidators(Validators.required);
     }
 
-    // Necessário depois de mudar os validators manualmente — sem isso,
-    // o Angular não reavalia se o campo passa a ser válido/inválido.
+    // Necessário depois de mudar os validators manualmente.
     passwordControl.updateValueAndValidity();
   }
 
@@ -86,9 +99,10 @@ export class EmployeeFormModalComponent implements OnChanges {
 
     const formValue = this.form.value;
 
-    // Se a senha ficou em branco na edição, não mandamos o campo pro
+    // Se a senha ficou em branco na edição, não mandamos o campo para o
     // backend — assim ele não sobrescreve a senha atual com string vazia.
     const payload = { ...formValue };
+
     if (this.isEditMode && !payload.password) {
       delete payload.password;
     }
@@ -104,7 +118,7 @@ export class EmployeeFormModalComponent implements OnChanges {
       },
       error: (err) => {
         this.isSaving = false;
-        // 409 = username ou email já cadastrado (ver employee_routes.py)
+
         this.errorMessage =
           err.status === 409
             ? 'Username ou e-mail já cadastrado.'

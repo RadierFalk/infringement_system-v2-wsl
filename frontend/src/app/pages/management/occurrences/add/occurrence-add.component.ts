@@ -34,14 +34,12 @@ export class OccurrenceAddComponent implements OnInit {
   error = '';
   success = false;
 
-  form: Omit<OccurrenceCreate, 'category_id' > & {
-    category_id: number | null;
-  } = {
+  form: OccurrenceCreate = {
     title: '',
     description: '',
     date: this.getCurrentDateTime(),
     employee_id: 0,
-    category_id: 0,
+    category_id: undefined,
   };
 
   constructor(
@@ -53,7 +51,6 @@ export class OccurrenceAddComponent implements OnInit {
 
   getCurrentDateTime(): string {
     const now = new Date();
-
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
@@ -103,8 +100,7 @@ export class OccurrenceAddComponent implements OnInit {
     if (
       !this.form.title.trim() ||
       !this.form.date ||
-      !this.form.employee_id ||
-      !this.form.category_id === null
+      !this.form.employee_id
     ) {
       this.error = 'Preencha os campos obrigatórios.';
       return;
@@ -113,12 +109,10 @@ export class OccurrenceAddComponent implements OnInit {
     this.loading = true;
 
     const payload: OccurrenceCreate = {
+      ...this.form,
       title: this.form.title.trim(),
       description: this.form.description?.trim() || undefined,
       status: 'Created',
-      date: this.form.date,
-      employee_id: this.form.employee_id,
-      category_id: this.form.category_id!,
     };
 
     this.occurrencesService.create(payload).subscribe({

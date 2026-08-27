@@ -5,11 +5,10 @@ from typing import List
 from app.database import get_db
 from app.repositories import FeedbackRepository, FeedbackReviewRepository
 from app.schemas import FeedbackCreate, FeedbackRead, FeedbackReviewCreate, FeedbackReviewRead
-from app.dependencies.auth import get_current_user, require_admin
+from app.dependencies.auth import get_current_user, require_super_admin
 from app.models import Employee
 from app.repositories import OccurrenceRepository
 from app.models.occurrence import StatusEnum
-
 
 router = APIRouter(prefix="/feedbacks", tags=["feedbacks"])
 
@@ -47,6 +46,7 @@ def create_feedback(
     occurrence_repo = OccurrenceRepository(db)
 
     occurrence = occurrence_repo.get(payload.occurrence_id)
+
     if not occurrence:
         raise HTTPException(status_code=404, detail="Ocorrência não encontrada")
 
@@ -57,7 +57,11 @@ def create_feedback(
         )
 
     feedback = feedback_repo.create(payload.model_dump())
-    occurrence_repo.update_status(payload.occurrence_id, StatusEnum.RESPONSE_RECEIVED)
+    occurrence_repo.update_status(
+        payload.occurrence_id,
+        StatusEnum.RESPONSE_RECEIVED
+    )
+
     return feedback
 
 
@@ -66,17 +70,19 @@ def review_feedback(
     feedback_id: int,
     payload: FeedbackReviewCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     feedback_repo = FeedbackRepository(db)
     review_repo = FeedbackReviewRepository(db)
     occurrence_repo = OccurrenceRepository(db)
 
     feedback = feedback_repo.get(feedback_id)
+
     if not feedback:
         raise HTTPException(status_code=404, detail="Feedback não encontrado")
 
     occurrence = occurrence_repo.get(feedback.occurrence_id)
+
     if not occurrence or occurrence.status != StatusEnum.RESPONSE_RECEIVED:
         raise HTTPException(
             status_code=400,
@@ -85,9 +91,18 @@ def review_feedback(
 
     data = payload.model_dump()
     data["feedback_id"] = feedback_id
+
     review = review_repo.create(data)
 
-    new_status = StatusEnum.RESOLVED if payload.is_accepted else StatusEnum.RESPONSE_REJECTED
-    occurrence_repo.update_status(feedback.occurrence_id, new_status)
+    new_status = (
+        StatusEnum.RESOLVED
+        if payload.is_accepted
+        else StatusEnum.RESPONSE_REJECTED
+    )
+
+    occurrence_repo.update_status(
+        feedback.occurrence_id,
+        new_status
+    )
 
     return review

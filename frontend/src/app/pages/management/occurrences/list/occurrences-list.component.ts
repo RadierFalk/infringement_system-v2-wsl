@@ -14,14 +14,18 @@ import {
 } from '../../../../services/occurrences.service';
 
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-
 import { CategoriesService } from '../../../../services/categories.service';
 import { OccurrenceCategory } from '../../../../models/occurrence-category.interface';
 
 @Component({
   selector: 'app-occurrences-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, ConfirmDialogComponent, FormsModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ConfirmDialogComponent,
+    FormsModule,
+  ],
   templateUrl: './occurrences-list.component.html',
   styleUrls: ['./occurrences-list.component.scss'],
 })
@@ -29,11 +33,9 @@ export class OccurrencesListComponent implements OnInit {
   occurrences: Occurrence[] = [];
 
   categories: OccurrenceCategory[] = [];
-
   selectedStatus = StatusEnum.CREATED;
   selectedCategoryId: number | null = null;
-
-  statusOptions = Object.values(StatusEnum)
+  statusOptions = Object.values(StatusEnum);
 
   loading = false;
   error = '';
@@ -81,7 +83,7 @@ export class OccurrencesListComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.error = 'It was not possible to load the occurrences.';
+        this.error = 'Não foi possível carregar as ocorrências.';
         this.loading = false;
       },
     });
@@ -119,7 +121,7 @@ export class OccurrencesListComponent implements OnInit {
       return;
     }
 
-    const occurrenceId = this.occurrencePendingDelete?.id;
+    const occurrenceId = this.occurrencePendingDelete.id;
 
     this.occurrencesService.delete(occurrenceId).subscribe({
       next: () => {
@@ -128,7 +130,7 @@ export class OccurrencesListComponent implements OnInit {
       },
       error: () => {
         this.deleteErrorMessage =
-          "It was not possible to delete the occurrence.";
+          'Não foi possível excluir a ocorrência.';
         this.occurrencePendingDelete = null;
       },
     });

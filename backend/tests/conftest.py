@@ -1,16 +1,20 @@
 import os
+
 os.environ["ENV_FILE"] = ".env.test"
 
 import pytest
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
 
 from app.config import Settings
 from app.models import Base
+from app.models.employee import UserType
 from app.database import get_db
 from app.main import app
 from app.core.security import hash_password
+
 
 # Settings apontando explicitamente para o .env.test
 test_settings = Settings(_env_file=".env.test")
@@ -19,7 +23,12 @@ engine = create_engine(
     test_settings.database_url,
     connect_args={"charset": "utf8mb4"},
 )
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+TestingSessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
+)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -59,8 +68,10 @@ def client(db_session):
             pass
 
     app.dependency_overrides[get_db] = override_get_db
+
     with TestClient(app) as test_client:
         yield test_client
+
     app.dependency_overrides.clear()
 
 
@@ -69,56 +80,85 @@ def client(db_session):
 @pytest.fixture()
 def department(db_session):
     from app.models import Department
-    dept = Department(name="TI", manager_email="ti@teste.com", director_name="Diretor TI")
+
+    dept = Department(
+        name="TI",
+        manager_email="ti@teste.com",
+        director_name="Diretor TI",
+    )
+
     db_session.add(dept)
     db_session.commit()
     db_session.refresh(dept)
+
     return dept
 
 
 @pytest.fixture()
 def admin_user(db_session, department):
     from app.models import Employee
+
     user = Employee(
         name="Admin Teste",
         username="admin.teste",
         email="admin.teste@teste.com",
         department_id=department.id,
         hashed_password=hash_password("admin123"),
-        is_admin="Y",
+        user_type=UserType.SUPER_ADMIN,
     )
+
     db_session.add(user)
     db_session.commit()
     db_session.refresh(user)
+
     return user
 
 
 @pytest.fixture()
 def common_user(db_session, department):
     from app.models import Employee
+
     user = Employee(
         name="Funcionario Teste",
         username="func.teste",
         email="func.teste@teste.com",
         department_id=department.id,
         hashed_password=hash_password("senha123"),
-        is_admin="N",
+        user_type=UserType.NORMAL,
     )
+
     db_session.add(user)
     db_session.commit()
     db_session.refresh(user)
+
     return user
 
 
 @pytest.fixture()
 def admin_headers(client, admin_user):
-    response = client.post("/auth/login", json={"username": "admin.teste", "password": "admin123"})
+    response = client.post(
+        "/auth/login",
+        json={
+            "username": "admin.teste",
+            "password": "admin123",
+        },
+    )
+
     token = response.json()["access_token"]
+
     return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.fixture()
 def common_headers(client, common_user):
-    response = client.post("/auth/login", json={"username": "func.teste", "password": "senha123"})
+    response = client.post(
+        "/auth/login",
+        json={
+            "username": "func.teste",
+            "password": "senha123",
+        },
+    )
+
     token = response.json()["access_token"]
+
     return {"Authorization": f"Bearer {token}"}

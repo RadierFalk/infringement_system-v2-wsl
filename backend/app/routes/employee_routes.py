@@ -6,7 +6,7 @@ from typing import Optional
 from app.database import get_db
 from app.repositories import EmployeeRepository
 from app.schemas import EmployeeCreate, EmployeeRead, PaginatedResponse
-from app.dependencies.auth import get_current_user, require_admin
+from app.dependencies.auth import get_current_user, require_super_admin
 from app.core.security import hash_password
 from app.models import Employee
 
@@ -14,7 +14,6 @@ router = APIRouter(prefix="/employees", tags=["employees"])
 
 
 def _to_employee_read(emp: Employee) -> dict:
-    """Converte o Model (is_admin: 'Y'/'N') para o formato esperado pelo Schema (is_admin: bool)."""
     return {
         "id": emp.id,
         "name": emp.name,
@@ -24,7 +23,8 @@ def _to_employee_read(emp: Employee) -> dict:
         "company": emp.company,
         "role": emp.role,
         "department_id": emp.department_id,
-        "is_admin": emp.is_admin == "Y",
+        "user_type": emp.user_type,
+        "is_admin": emp.is_admin,
         "department": emp.department,
     }
 
@@ -38,7 +38,13 @@ def list_employees(
     size: int = Query(10, ge=1, le=100),
 ):
     repo = EmployeeRepository(db)
-    items, total = repo.get_filtered(filter_text=filter_text, page=page, size=size)
+
+    items, total = repo.get_filtered(
+        filter_text=filter_text,
+        page=page,
+        size=size,
+    )
+
     return PaginatedResponse(
         items=[_to_employee_read(e) for e in items],
         total=total,
@@ -55,8 +61,13 @@ def get_employee(
 ):
     repo = EmployeeRepository(db)
     emp = repo.get(id)
+
     if not emp:
-        raise HTTPException(status_code=404, detail="Funcionário não encontrado")
+        raise HTTPException(
+            status_code=404,
+            detail="Funcionário não encontrado",
+        )
+
     return _to_employee_read(emp)
 
 
@@ -64,24 +75,36 @@ def get_employee(
 def create_employee(
     payload: EmployeeCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = EmployeeRepository(db)
+
     if repo.get_by_username(payload.username):
-        raise HTTPException(status_code=409, detail="Username já cadastrado")
+        raise HTTPException(
+            status_code=409,
+            detail="Username já cadastrado",
+        )
 
     data = payload.model_dump()
     plain_password = data.pop("password", None)
-    is_admin = data.pop("is_admin", False)
 
-    data["hashed_password"] = hash_password(plain_password) if plain_password else None
-    data["is_admin"] = "Y" if is_admin else "N"
+    data["hashed_password"] = (
+        hash_password(plain_password)
+        if plain_password
+        else None
+    )
 
     try:
         emp = repo.create(data)
     except IntegrityError:
         db.rollback()
-        raise HTTPException(status_code=409, detail="Erro de integridade (username/email duplicado ou departamento inválido)")
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Erro de integridade "
+                "(username/email duplicado ou departamento inválido)"
+            ),
+        )
 
     return _to_employee_read(emp)
 
@@ -91,21 +114,37 @@ def update_employee(
     id: int,
     payload: EmployeeCreate,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = EmployeeRepository(db)
 
     data = payload.model_dump()
     plain_password = data.pop("password", None)
-    is_admin = data.pop("is_admin", False)
 
     if plain_password:
         data["hashed_password"] = hash_password(plain_password)
-    data["is_admin"] = "Y" if is_admin else "N"
+    else:
+        # Não sobrescreve a senha atual se o campo veio vazio.
+        data.pop("hashed_password", None)
 
-    updated = repo.update(id, data)
+    try:
+        updated = repo.update(id, data)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Erro de integridade "
+                "(username/email duplicado ou departamento inválido)"
+            ),
+        )
+
     if not updated:
-        raise HTTPException(status_code=404, detail="Funcionário não encontrado")
+        raise HTTPException(
+            status_code=404,
+            detail="Funcionário não encontrado",
+        )
+
     return _to_employee_read(updated)
 
 
@@ -113,8 +152,12 @@ def update_employee(
 def delete_employee(
     id: int,
     db: Session = Depends(get_db),
-    current_user: Employee = Depends(require_admin),
+    current_user: Employee = Depends(require_super_admin),
 ):
     repo = EmployeeRepository(db)
+
     if not repo.delete(id):
-        raise HTTPException(status_code=404, detail="Funcionário não encontrado")
+        raise HTTPException(
+            status_code=404,
+            detail="Funcionário não encontrado",
+        )
