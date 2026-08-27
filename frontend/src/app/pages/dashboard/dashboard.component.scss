@@ -83,13 +83,57 @@
     transition: width 0.3s ease;
   }
 
-  // Cada status ganha a cor da barra de progresso correspondente,
-  // pra ficar fácil identificar visualmente sem ler o texto.
   &.status-created .status-bar-fill { background-color: $color-text-muted; }
   &.status-sent .status-bar-fill { background-color: $color-primary; }
   &.status-received .status-bar-fill { background-color: $color-warning; }
   &.status-rejected .status-bar-fill { background-color: $color-danger; }
   &.status-resolved .status-bar-fill { background-color: $color-success; }
+}
+
+.chart-section {
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-5;
+  margin-bottom: $space-6;
+}
+
+.chart-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+  margin-bottom: $space-4;
+
+  h2 {
+    font-size: $font-size-lg;
+    margin: 0;
+  }
+}
+
+.chart-filters {
+  display: flex;
+  gap: $space-4;
+  flex-wrap: wrap;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.filter-select {
+  padding: $space-3;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-text-primary;
+  font-size: $font-size-sm;
+  min-width: 160px;
 }
 
 .recent-section {

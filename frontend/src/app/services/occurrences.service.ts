@@ -3,6 +3,10 @@ import { Observable } from 'rxjs';
 import { ApiService } from '../core/services/api.service';
 import { Occurrence } from '../models/occurrence.interface';
 import { PaginatedResponse } from '../models/paginated-response.interface';
+import {
+  AvailableYearsResponse,
+  MonthlyByCategoryStats,
+} from '../models/occurrence-stats.interface';
 
 export interface OccurrenceFilters {
   filter?: string;
@@ -43,5 +47,29 @@ export class OccurrencesService {
 
   delete(id: number): Observable<void> {
     return this.api.delete<void>(`/occurrences/${id}`);
+  }
+
+  getAvailableYears(
+    department_id?: number,
+  ): Observable<AvailableYearsResponse> {
+    return this.api.get<AvailableYearsResponse>(
+      '/occurrences/stats/available-years',
+      {
+        department_id,
+      },
+    );
+  }
+
+  getMonthlyByCategory(
+    year: number,
+    department_id?: number,
+  ): Observable<MonthlyByCategoryStats> {
+    return this.api.get<MonthlyByCategoryStats>(
+      '/occurrences/stats/monthly-by-category',
+      {
+        year,
+        department_id,
+      },
+    );
   }
 }

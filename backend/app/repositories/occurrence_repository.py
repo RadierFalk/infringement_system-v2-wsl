@@ -1,9 +1,8 @@
 from typing import List, Optional, Tuple
-from sqlalchemy import or_
+from sqlalchemy import or_, func, extract
 from sqlalchemy.orm import Session, joinedload
 
 from .base_repository import BaseRepository
-from app.models import Occurrence, Employee, Department, OccurrenceCategory
 from app.models import Occurrence, Employee, Department, OccurrenceCategory
 from app.models.occurrence import StatusEnum
 
@@ -79,3 +78,30 @@ class OccurrenceRepository(BaseRepository):
         self.db.commit()
         self.db.refresh(occurrence)
         return occurrence
+
+
+    # ---------- Estatísticas pro dashboard ----------
+
+    def get_available_years(self, department_id: Optional[int] = None) -> List[int]:
+        query = self.db.query(extract("year", Occurrence.date).label("year")).distinct()
+
+        if department_id:
+            query = query.join(Employee).filter(Employee.department_id == department_id)
+
+        query = query.order_by(extract("year", Occurrence.date).desc())
+        return [int(row.year) for row in query.all()]
+
+    def get_monthly_counts_by_category(
+        self, year: int, department_id: Optional[int] = None
+    ) -> List[Tuple[int, Optional[int], int]]:
+        query = self.db.query(
+            extract("month", Occurrence.date).label("month"),
+            Occurrence.category_id,
+            func.count(Occurrence.id).label("total"),
+        ).filter(extract("year", Occurrence.date) == year)
+
+        if department_id:
+            query = query.join(Employee).filter(Employee.department_id == department_id)
+
+        query = query.group_by("month", Occurrence.category_id)
+        return [(int(row.month), row.category_id, row.total) for row in query.all]

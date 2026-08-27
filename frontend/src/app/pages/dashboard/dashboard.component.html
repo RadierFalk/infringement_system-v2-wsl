@@ -32,6 +32,43 @@
       </div>
     </div>
 
+    <!-- Gráfico de ocorrências por mês/categoria, com filtro de ano
+         (só os que têm dado) e, pra admin/super_admin, de departamento -->
+    <section class="chart-section">
+      <div class="chart-section-header">
+        <h2>Ocorrências por mês e categoria</h2>
+
+        <div class="chart-filters">
+          <label class="filter-field">
+            Ano
+            <select
+              class="filter-select"
+              [(ngModel)]="selectedYear"
+              (ngModelChange)="onYearChange()"
+              [disabled]="availableYears.length === 0"
+            >
+              <option *ngIf="availableYears.length === 0" [ngValue]="null">Sem dados</option>
+              <option *ngFor="let year of availableYears" [ngValue]="year">{{ year }}</option>
+            </select>
+          </label>
+
+          <label class="filter-field" *ngIf="showDepartmentFilter">
+            Departamento
+            <select class="filter-select" [(ngModel)]="selectedDepartmentId" (ngModelChange)="onDepartmentChange()">
+              <option [ngValue]="null">Todos os departamentos</option>
+              <option *ngFor="let dept of departments" [ngValue]="dept.id">{{ dept.name }}</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div *ngIf="isChartLoading" class="loading-placeholder">Carregando gráfico...</div>
+      <p *ngIf="chartErrorMessage" class="error-message">{{ chartErrorMessage }}</p>
+
+      <app-occurrences-bar-chart *ngIf="!isChartLoading && !chartErrorMessage" [stats]="monthlyStats">
+      </app-occurrences-bar-chart>
+    </section>
+
     <!-- Tabela com as 5 ocorrências mais recentes -->
     <div class="recent-section">
       <h2>Ocorrências recentes</h2>

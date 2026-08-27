@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { OccurrencesService } from '../../services/occurrences.service';
+import { DepartmentsService } from '../../services/departments.service';
 import { AuthService } from '../../services/auth.service';
 import { Occurrence, StatusEnum } from '../../models/occurrence.interface';
+import { DepartmentWithCount } from '../../models/department.interface';
+import { MonthlyByCategoryStats } from '../../models/occurrence-stats.interface';
+import { OccurrencesBarChartComponent } from '../../shared/components/occurrences-bar-chart/occurrences-bar-chart.component';
 
 // Representa um card de estatística na tela. Ter isso tipado permite
 // montar os cards com *ngFor no template, em vez de repetir 5 blocos
@@ -17,7 +22,7 @@ interface StatusCount {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, OccurrencesBarChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
@@ -33,13 +38,102 @@ export class DashboardComponent implements OnInit {
   statusCounts: StatusCount[] = [];
   recentOccurrences: Occurrence[] = [];
 
+  // -------- Gráfico de ocorrências por mês/categoria --------
+
+  // O filtro de departamento só aparece pra quem o backend de fato
+  // respeita (admin/super_admin). Pro 'normal' o backend sempre força o
+  // próprio departamento independente do que for mandado — mostrar o
+  // filtro pra ele seria cosmético e enganoso (mesmo princípio do
+  // plano_rbac.md: o frontend só esconde o que o backend já barra, nunca
+  // finge permitir algo que o backend recusa).
+  showDepartmentFilter = false;
+  departments: DepartmentWithCount[] = [];
+  selectedDepartmentId: number | null = null;
+
+  availableYears: number[] = [];
+  selectedYear: number | null = null;
+
+  monthlyStats: MonthlyByCategoryStats | null = null;
+  isChartLoading = true;
+  chartErrorMessage = '';
+
   constructor(
     private occurrencesService: OccurrencesService,
+    private departmentsService: DepartmentsService,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
+
+    this.showDepartmentFilter = this.authService.isAdminOrAbove();
+    if (this.showDepartmentFilter) {
+      this.departmentsService.getAll().subscribe({
+        next: (data) => (this.departments = data),
+        // filtro de departamento é acessório: se falhar, o resto do
+        // dashboard (incluindo o gráfico sem filtro) continua funcionando
+        error: () => {},
+      });
+    }
+
+    this.loadAvailableYears();
+  }
+
+  onDepartmentChange(): void {
+    // Os anos com dado podem mudar por departamento (um depto pode não
+    // ter ocorrência num ano que outro tem), então recarrega a lista de
+    // anos também, não só o gráfico.
+    this.loadAvailableYears();
+  }
+
+  onYearChange(): void {
+    this.loadMonthlyStats();
+  }
+
+  private loadAvailableYears(): void {
+    const departmentId = this.selectedDepartmentId ?? undefined;
+
+    this.occurrencesService.getAvailableYears(departmentId).subscribe({
+      next: (response) => {
+        this.availableYears = response.years;
+
+        const currentYear = new Date().getFullYear();
+        // Prefere o ano atual se ele tiver dado; senão o mais recente
+        // disponível; se não houver nenhum ano, não tem o que selecionar.
+        this.selectedYear = this.availableYears.includes(currentYear)
+          ? currentYear
+          : this.availableYears[0] ?? null;
+
+        this.loadMonthlyStats();
+      },
+      error: () => {
+        this.chartErrorMessage = 'Não foi possível carregar os anos disponíveis.';
+        this.isChartLoading = false;
+      },
+    });
+  }
+
+  private loadMonthlyStats(): void {
+    if (this.selectedYear === null) {
+      this.monthlyStats = null;
+      this.isChartLoading = false;
+      return;
+    }
+
+    this.isChartLoading = true;
+    this.chartErrorMessage = '';
+    const departmentId = this.selectedDepartmentId ?? undefined;
+
+    this.occurrencesService.getMonthlyByCategory(this.selectedYear, departmentId).subscribe({
+      next: (data) => {
+        this.monthlyStats = data;
+        this.isChartLoading = false;
+      },
+      error: () => {
+        this.chartErrorMessage = 'Não foi possível carregar o gráfico de ocorrências.';
+        this.isChartLoading = false;
+      },
+    });
   }
 
   private loadDashboardData(): void {

@@ -1,0 +1,51 @@
+<div class="chart-card">
+  <ng-container *ngIf="hasData; else emptyState">
+    <svg
+      class="viz-root"
+      [attr.viewBox]="'0 0 ' + viewBoxWidth + ' ' + viewBoxHeight"
+      preserveAspectRatio="xMidYMid meet"
+      role="img"
+      [attr.aria-label]="'Ocorrências por mês e categoria em ' + stats?.year"
+    >
+      <g class="gridlines">
+        <ng-container *ngFor="let line of gridlines">
+          <line
+            [attr.x1]="plotLeftPx"
+            [attr.x2]="plotRightPx"
+            [attr.y1]="line.y"
+            [attr.y2]="line.y"
+            class="gridline"
+          />
+          <text [attr.x]="plotLeftPx - 8" [attr.y]="line.y" class="axis-label axis-label-y">{{ line.label }}</text>
+        </ng-container>
+      </g>
+
+      <line [attr.x1]="plotLeftPx" [attr.x2]="plotRightPx" [attr.y1]="baselineY" [attr.y2]="baselineY" class="baseline" />
+
+      <g class="month-labels">
+        <text *ngFor="let g of groups" [attr.x]="g.x" [attr.y]="baselineY + 20" class="axis-label axis-label-x">
+          {{ g.monthLabel }}
+        </text>
+      </g>
+
+      <g class="bars">
+        <path *ngFor="let bar of bars" [attr.d]="barPath(bar)" [style.fill]="'var(' + bar.colorVar + ')'" class="bar">
+          <title>{{ bar.seriesName }} · {{ bar.monthLabel }}: {{ bar.value }} ocorrência{{ bar.value === 1 ? '' : 's' }}</title>
+        </path>
+      </g>
+    </svg>
+
+    <ul class="legend" *ngIf="series.length > 1">
+      <li *ngFor="let s of series">
+        <span class="legend-swatch" [style.background]="'var(' + s.colorVar + ')'"></span>
+        {{ s.name }}
+      </li>
+    </ul>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <p class="empty-state">
+      {{ stats ? 'Nenhuma ocorrência registrada em ' + stats.year + '.' : 'Sem dados para exibir.' }}
+    </p>
+  </ng-template>
+</div>
