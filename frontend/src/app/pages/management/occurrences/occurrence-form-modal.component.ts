@@ -72,7 +72,7 @@ export class OccurrenceFormModalComponent {
       },
       error: () => {
         this.isSaving = false;
-        this.errorMessage = 'Não foi possível registrar a ocorrência. Tente novamente.';
+        this.errorMessage = 'It was not possible to register the occurrence. Please try again.';
       },
     });
   }

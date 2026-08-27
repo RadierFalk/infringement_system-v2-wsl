@@ -3,12 +3,12 @@
   <header class="page-header">
     <div>
       <h1>Occurrences</h1>
-      <p>Visualizar e gerenciar ocorrências.</p>
+      <p>View and manage occurrences.</p>
     </div>
 
     <div class="header-actions">
       <a class="back-button" routerLink="/management/occurrences">
-        ← Voltar
+        ← Back
       </a>
 
       <a class="add-button" routerLink="/management/occurrences/add">
@@ -38,7 +38,7 @@
       (ngModelChange)="onFilterChange()"
     >
       <option [ngValue]="null">
-        Todas as categorias
+        All categories
       </option>
 
       <option
@@ -54,7 +54,7 @@
   <section class="content-card">
 
     <div *ngIf="loading" class="state-message">
-      Carregando ocorrências...
+      Loading occurrences...
     </div>
 
     <div *ngIf="error && !loading" class="state-message error">
@@ -65,7 +65,7 @@
       *ngIf="!loading && !error && occurrences.length === 0"
       class="state-message"
     >
-      Nenhuma ocorrência encontrada.
+      No occurrences found.
     </div>
 
     <div
@@ -76,12 +76,12 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Título</th>
-            <th>Funcionário</th>
-            <th>Categoria</th>
+            <th>Title</th>
+            <th>Employee</th>
+            <th>Category</th>
             <th>Status</th>
-            <th>Data</th>
-            <th>Ações</th>
+            <th>Date</th>
+            <th>Actions</th>
           </tr>
         </thead>
 
@@ -120,7 +120,7 @@
                 class="btn-link btn-link-danger"
                 (click)="requestDelete(occurrence)"
               >
-              Excluir
+              Delete
               </button>
             </td>
           </tr>
@@ -155,8 +155,8 @@
 
     <app-confirm-dialog
       *ngIf="occurrencePendingDelete"
-      title="Excluir ocorrência"
-      [message]="'Tem certeza que deseja excluir a ocorrência \'' + occurrencePendingDelete.title + '\'?'"
+      title="Delete occurrence"
+      [message]="'Are you sure you want to delete the occurrence \'' + occurrencePendingDelete.title + '\'?'"
       (confirmed)="confirmDelete()"
       (cancelled)="cancelDelete()"
       ></app-confirm-dialog>

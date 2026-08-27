@@ -30,7 +30,7 @@ export class OccurrencesListComponent implements OnInit {
 
   categories: OccurrenceCategory[] = [];
 
-  selectedStatus = '';
+  selectedStatus = StatusEnum.CREATED;
   selectedCategoryId: number | null = null;
 
   statusOptions = Object.values(StatusEnum)
@@ -81,7 +81,7 @@ export class OccurrencesListComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.error = 'Não foi possível carregar as ocorrências.';
+        this.error = 'It was not possible to load the occurrences.';
         this.loading = false;
       },
     });
@@ -128,7 +128,7 @@ export class OccurrencesListComponent implements OnInit {
       },
       error: () => {
         this.deleteErrorMessage =
-          "Não foi possível excluir a ocorrência.";
+          "It was not possible to delete the occurrence.";
         this.occurrencePendingDelete = null;
       },
     });
