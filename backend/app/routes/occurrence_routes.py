@@ -14,7 +14,6 @@ from app.models.occurrence import StatusEnum
 
 router = APIRouter(prefix="/occurrences", tags=["occurrences"])
 
-
 def _effective_department_id(
     current_user: Employee,
     department_id: Optional[int],
@@ -23,14 +22,15 @@ def _effective_department_id(
     Regra de segurança única, reaproveitada em toda rota que filtra por
     departamento: 'normal' NUNCA escolhe o department_id — o valor vindo do
     cliente só vale pra super_admin/admin. Pra 'normal', sobrescrevemos com
-    o departamento do próprio usuário autenticado (dado que vem do token,
-    não do cliente, então não dá pra falsificar).
+    o departamento do próprio usuário autenticado.
     """
-    if current_user.user_type == UserType.NORMAL:
-        return current_user.department_id
+    user_type = getattr(current_user, "user_type", None)
+    user_department_id = getattr(current_user, "department_id", None)
+
+    if user_type is UserType.NORMAL:
+        return user_department_id
 
     return department_id
-
 
 def _ensure_can_view_occurrence(
     current_user: Employee,
